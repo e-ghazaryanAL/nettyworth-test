@@ -16,7 +16,7 @@ import { Loader } from '../../../components/Loader';
 import useCopy from '../../../hooks/useCopy';
 import usePaginate from '../../../hooks/usePaginate';
 import { truncateAddress } from '../../../utils/formatter';
-import { ETHWallet, getWalletUpshot } from '../../../api/api';
+import { getWalletUpshot } from '../../../api/api';
 import { Asset } from '../../../redux/top-sales/upshotmodel';
 import { Collection } from '../../../redux/top-sales/model';
 
@@ -52,21 +52,25 @@ const MyNftsPage = () => {
 
   useEffect(() => {
     const getWalletAssets = async () => {
-      const res = await getWalletUpshot<WalletAssets>({ walletAddress: ETHWallet, limit, offset: (pageNumber - 1) * limit, include_count: true }, 'assets/owned');
-      setWalletsOwned(res);
+      if (address) {
+        const res = await getWalletUpshot<WalletAssets>({ walletAddress: address, limit, offset: (pageNumber - 1) * limit, include_count: true }, 'assets/owned');
+        setWalletsOwned(res);
+      }
     };
     getWalletAssets();
   }, [address, pageNumber]);
 
   useEffect(() => {
     const getWalletCollections = async () => {
-      const res = await getWalletUpshot<{ collections: Collection[] }>(
-        {
-          walletAddress: ETHWallet,
-        },
-        'collections/owned'
-      );
-      setWalletCollections(res.collections);
+      if (address) {
+        const res = await getWalletUpshot<{ collections: Collection[] }>(
+          {
+            walletAddress: address,
+          },
+          'collections/owned'
+        );
+        setWalletCollections(res.collections);
+      }
     };
     getWalletCollections();
   }, []);
@@ -75,16 +79,23 @@ const MyNftsPage = () => {
     setFilterCategory((prev) => {
       return prev.map((val) => (val.name === 'collection' ? { ...val, val: collectionName } : val));
     });
-    const filteredAssets = await getWalletUpshot<WalletAssets>(
-      {
-        walletAddress: ETHWallet,
-        collection_id_or_slugs: [collectAddress],
-      },
-      'assets/owned'
-    );
-    setWalletsOwned(filteredAssets);
+    if (address) {
+      const filteredAssets = await getWalletUpshot<WalletAssets>(
+        {
+          walletAddress: address,
+          collection_id_or_slugs: [collectAddress],
+        },
+        'assets/owned'
+      );
+      setWalletsOwned(filteredAssets);
+    }
   };
-  const handleCategoryFilter = (name: string) => {};
+  const handleSort = (sortOrder: 'ASC' | 'DESC') => {};
+  const handleCategoryFilter = (name: string) => {
+    setFilterCategory((prev) => {
+      return prev.map((val) => (val.name === name ? { ...val, val: '' } : val));
+    });
+  };
   const handleSearch = () => {};
   return (
     <div className='pt-5 px-8 pb-16 md:pb-4 max-w-[1300px] 2xl:mx-auto'>
@@ -115,7 +126,7 @@ const MyNftsPage = () => {
                   <IconDetection className='w-[26px] h-[26px]' />
                 </span>
                 <div className='flex flex-col'>
-                  <span className='text-[14px] placeholder:text-base text-dark-blue'>{collectionFilter.val || 'Filter By Collection'}</span>
+                  <span className='text-[14px] placeholder:text-base text-dark-blue'>{collectionFilter?.val || 'Filter By Collection'}</span>
                   {/* {summaryLoading ? <div className='loader w-2 h-4'></div> : <p className='text-xs text-dark-blue font-normal'>{USDDollarFormatter(collectionSumm)}</p>}
                   {summaryErr ? <span>something went wrong</span> : null} */}
                 </div>
@@ -152,7 +163,7 @@ const MyNftsPage = () => {
               .filter((categ) => categ.val)
               .map((category) => {
                 return (
-                  <div key={category.name} className='flex gap-[18px] items-center bg-light-gray py-2 px-4 rounded w-max' onClick={() => handleCategoryFilter('')}>
+                  <div key={category.name} className='flex gap-[18px] items-center bg-light-gray py-2 px-4 rounded w-max' onClick={() => handleCategoryFilter(category.name)}>
                     <span className='font-medium'>{category.val}</span>
                     <FontAwesomeIcon icon={faSquareXmark} className='text-dark-blue w-[13px] h-[13px]' />
                   </div>
