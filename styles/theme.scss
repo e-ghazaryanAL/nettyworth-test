@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .dark {
+    body {
+      @apply bg-dark-mode;
+      @apply border-dark-mode-light-blue;
+      color: #fff;
+    }
+    input {
+      &:hover,
+      &:focus {
+        outline: none !important;
+        background-color: #0d1a3a !important;
+      }
+    }
+    hr {
+      background-color: #212b43;
+      border: 0;
+    }
+    span:not(.text-primary) {
+      color: #fff;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    li,
+    blockquote,
+    div,
+    td,
+    th,
+    a {
+      &:not(.text-primary) {
+        color: #fff;
+      }
+    }
+    p:not(.text-primary, .dark-values),
+    .more-container li,
+    .more-container a,
+    .more-container h3 {
+      color: #fff;
+    }
+    .dark-values {
+      color: #6acc32;
+    }
+    footer,
+    .react-share__ShareButton,
+    nav,
+    div:not(.banner, .banner div, td div, .dark-widget div, .dark-widget, .dark-latest, .dark-latest div, .dark-primary, .dark-feedback, .advertising-swiper .swiper-wrapper) {
+      @apply bg-dark-mode;
+      @apply border-dark-mode-light-blue;
+      color: #fff;
+    }
+    button:not(.active-news, .dark-primary, .dark-latest button, .react-share__ShareButton),
+    input,
+    textarea,
+    label,
+    .rc-menu,
+    .rc-menu-item {
+      @apply bg-dark-mode-btn;
+      @apply border-dark-mode-light-blue;
+      color: #fff;
+    }
+
+    .dark-widget,
+    .dark-latest {
+      div:not(.dark-red) {
+        @apply bg-dark-mode-light-blue;
+        @apply border-dark-mode-light-blue;
+      }
+    }
+
+    // .page-link {
+    //   background-color: #0d1a3a !important;
+    // }
+    .news_pagination li:first-child > .page-link,
+    .news_pagination li:last-child > .page-link {
+      @apply bg-dark-mode;
+    }
+    .rc-menu-item:hover,
+    input:hover,
+    textarea:hover {
+      @apply bg-dark-mode;
+    }
+    input::placeholder {
+      color: #fff;
+    }
+    .active-news {
+      @apply bg-dark-mode;
+      @apply border-dark-mode-light-blue;
+    }
+    .activeLink {
+      @apply bg-dark-blue;
+      @apply border-dark-mode-light-blue;
+      span {
+        @apply text-primary;
+      }
+    }
+    .dark-feedback {
+      @apply bg-white;
+      * {
+        @apply bg-white;
+      }
+    }
+    .homeGeneral {
+      background-image: url('/background-dark.svg');
+      background-repeat: no-repeat;
+      background-position: -11px -57px;
+    }
+    .advertising-swiper .swiper-button-prev,
+    .advertising-swiper .swiper-button-next {
+      @apply border;
+    }
+  }
+}

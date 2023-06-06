@@ -1,0 +1,133 @@
+/* MORE COMPONENT */
+@tailwind components;
+
+.more-container {
+	height: calc(100vh - 65px);
+	transform: translateX(-100%);
+	width: 0px;
+	overflow: hidden;
+	overflow-y: auto;
+  opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.5s ease, visibility 0.5s ease;
+	transform: translate(0%);
+	@apply absolute z-[70] left-0 right-0 h-full w-full max-w-full md:w-[250px] md:fixed md:left-[200px] bg-white/85 backdrop-blur-[80px];
+  top: 64px;
+	border: 1px solid gainsboro
+}
+
+
+
+@layer components {
+	.close-icon-btn {
+		@apply flex justify-end;
+	}
+
+	.close-icon-btn>.icons {
+		@apply p-0;
+	}
+
+	.more-copyrights {
+		@apply flex flex-col;
+	}
+}
+
+.more-container > *,.more-container-mobile > * {
+	@apply border-gray-200 border-b p-4;
+}
+
+.more-container-mobile>* {
+	@apply pl-12;
+}
+
+.more-container>*, .more-container-mobile>*:first-child {
+	@apply border-b-[0] pb-0;
+}
+
+.follow {
+	@apply border-y-[1px] border-lighter-gray mt-6 pb-4
+}
+
+.more-footer {
+	@apply border-b-[1px] border-t-light-gray pb-6
+}
+
+.more-wrappers>h3 {
+	@apply text-xl text-dark-blue md:text-sm font-semibold w-full;
+}
+
+.more-wrappers:not(.social-icons) {
+	@apply flex flex-col gap-3;
+}
+
+.more-items:not(.social-icons) {
+	@apply flex flex-col gap-2;
+}
+
+.more-wrappers>.social-icons {
+	@apply grid grid-cols-6 md:grid-cols-3 md:grid-rows-2 justify-center gap-2 rounded-sm;
+}
+
+.more-wrappers>.social-icons.mobile {
+	@apply flex justify-start flex-wrap gap-2 rounded-sm;
+}
+
+.icons {
+	@apply p-3 h-4 w-4 font-medium text-primary bg-primary;
+}
+
+.social-icons.mobile .icons {
+	@apply p-2 h-3 w-3;
+}
+
+.more-container-mobile .close-icon-btn .icons {
+	@apply w-[10px] h-[10px] p-4 rounded text-white bg-primary-blue;
+}
+
+.more-container.open {
+	opacity: 1;
+	visibility: visible;
+}
+
+.setting-show {
+	transition: height 0.4s;
+	height: 69px;
+}
+
+.setting-show.open {
+	height: 83px;
+}
+
+.account-settings {
+	backdrop-filter: blur(60px)
+}
+
+.activeLink {
+	@apply bg-white text-primary;
+}
+
+.activeLink svg {
+	@apply fill-[#006FFF];
+}
+
+.active-footer {
+	@apply bg-primary-blue;
+}
+
+.active-footer svg {
+	@apply fill-[#FFFFFF];
+}
+
+.more-copyrights.mobile {
+	@apply flex-row gap-2 flex-wrap;
+}
+
+@keyframes expand {
+	0% {
+		width: 50%;
+	}
+
+	100% {
+		width: 100%;
+	}
+}

@@ -1,0 +1,19 @@
+<svg id="Face_Detection" data-name="Face Detection" xmlns="http://www.w3.org/2000/svg" width="26.917" height="26.917" viewBox="0 0 26.917 26.917">
+  <g id="Group_3760" data-name="Group 3760">
+    <g id="Group_3756" data-name="Group 3756">
+      <path id="Path_4800" data-name="Path 4800" d="M1498.5,177.468a1.5,1.5,0,0,1-1.5-1.5v-4.486a4.492,4.492,0,0,1,4.486-4.486h4.486a1.5,1.5,0,1,1,0,2.991h-4.486a1.5,1.5,0,0,0-1.5,1.5v4.486A1.5,1.5,0,0,1,1498.5,177.468Z" transform="translate(-1497 -167)" fill="#006fff"/>
+    </g>
+    <g id="Group_3757" data-name="Group 3757" transform="translate(16.449)">
+      <path id="Path_4801" data-name="Path 4801" d="M1516.973,177.468a1.5,1.5,0,0,1-1.5-1.5v-4.486a1.5,1.5,0,0,0-1.5-1.5H1509.5a1.5,1.5,0,1,1,0-2.991h4.486a4.492,4.492,0,0,1,4.486,4.486v4.486A1.5,1.5,0,0,1,1516.973,177.468Z" transform="translate(-1508 -167)" fill="#006fff"/>
+    </g>
+    <g id="Group_3758" data-name="Group 3758" transform="translate(0 16.449)">
+      <path id="Path_4802" data-name="Path 4802" d="M1505.972,188.468h-4.486a4.492,4.492,0,0,1-4.486-4.486V179.5a1.5,1.5,0,0,1,2.991,0v4.486a1.5,1.5,0,0,0,1.5,1.5h4.486a1.5,1.5,0,0,1,0,2.991Z" transform="translate(-1497 -178)" fill="#006fff"/>
+    </g>
+    <g id="Group_3759" data-name="Group 3759" transform="translate(16.449 16.449)">
+      <path id="Path_4803" data-name="Path 4803" d="M1513.981,188.468H1509.5a1.5,1.5,0,0,1,0-2.991h4.486a1.5,1.5,0,0,0,1.5-1.5V179.5a1.5,1.5,0,0,1,2.991,0v4.486A4.492,4.492,0,0,1,1513.981,188.468Z" transform="translate(-1508 -178)" fill="#006fff"/>
+    </g>
+  </g>
+  <g id="Group_3761" data-name="Group 3761" transform="translate(5.981 4.486)">
+    <path id="Path_4804" data-name="Path 4804" d="M1508.477,187.944a7.485,7.485,0,0,1-7.477-7.477v-2.991a7.477,7.477,0,0,1,14.954,0v2.991A7.485,7.485,0,0,1,1508.477,187.944Zm0-14.954a4.492,4.492,0,0,0-4.486,4.486v2.991a4.486,4.486,0,0,0,8.972,0v-2.991A4.492,4.492,0,0,0,1508.477,172.991Z" transform="translate(-1501 -170)" fill="#006fff"/>
+  </g>
+</svg>

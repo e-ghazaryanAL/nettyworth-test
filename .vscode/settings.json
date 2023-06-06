@@ -1,0 +1,7 @@
+{
+  "files.exclude": {},
+  "editor.tabSize": 2,
+  "editor.formatOnSave": false,
+  "prettier.singleQuote": true,
+  "prettier.jsxSingleQuote": true
+}

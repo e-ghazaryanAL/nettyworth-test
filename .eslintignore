@@ -1,0 +1,6 @@
+node_modules
+out
+amplify
+sw.*
+*.js
+*.js.map
