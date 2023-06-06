@@ -1,18 +1,15 @@
 import Menu, { Item as MenuItem } from 'rc-menu';
+import { Collection } from '../../../redux/top-sales/model';
 
 import { IAssets } from '../../../redux/wallet/model';
 
-const MenuDropdown = ({ data, handler }: { data: IAssets[]; handler: (collectionName: string, collectAddress: string) => void }) => {
-  const modified = data?.filter((val, i, self) => {
-    return i === self.findIndex((nft) => nft.collectionName === val.collectionName && nft.collectionName);
-  });
-
+const MenuDropdown = ({ data, handler }: { data: null | Collection[]; handler: (collectionName: string, collectAddress: string) => void }) => {
   return (
     <Menu className='top-sales-dropdown h-[150px] overflow-auto'>
-      {modified?.map((item, idx) => {
+      {data?.map((item, idx) => {
         return (
-          <MenuItem key={idx} onClick={() => handler?.(item.collectionName, item.collectionAddress)}>
-            {item.collectionName}
+          <MenuItem key={idx} onClick={() => handler?.(item.name, item.slug)}>
+            {item.name}
           </MenuItem>
         );
       })}

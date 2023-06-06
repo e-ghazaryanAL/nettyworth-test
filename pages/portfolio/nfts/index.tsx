@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Dropdown from 'rc-dropdown';
 import { useAccount } from 'wagmi';
 
-import { getCollectionFloorPrice, getEthCurrency, getSummaryTokenStats } from '../../../api/api';
 import 'rc-dropdown/assets/index.css';
 import IconDetection from '../../../assets/icons/icon-detection.svg';
 import CopyIcon from '../../../assets/icons/icon-duplicate.svg';
@@ -14,13 +13,12 @@ import { MenuDropdown, PriceDropDown } from '../../../components/dashboard/my-nf
 import NFTCard from '../../../components/dashboard/my-nfts/NFTCard';
 import { Paginataion } from '../../../components/dashboard/news/Pagination';
 import { Loader } from '../../../components/Loader';
-import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import useCopy from '../../../hooks/useCopy';
 import usePaginate from '../../../hooks/usePaginate';
-import { ICollection, ISummaryTokens } from '../../../redux/my-nfts/model';
-import { fetchMyNfts } from '../../../redux/my-nfts/myNftsSlice';
-import { IAssets, IEthCurrency } from '../../../redux/wallet/model';
-import { truncateAddress, USDDollarFormatter } from '../../../utils/formatter';
+import { truncateAddress } from '../../../utils/formatter';
+import { ETHWallet, getWalletUpshot } from '../../../api/api';
+import { Asset } from '../../../redux/top-sales/upshotmodel';
+import { Collection } from '../../../redux/top-sales/model';
 
 const initialFilter = [
   {
@@ -34,154 +32,60 @@ const initialFilter = [
 ];
 
 type FilterTypes = 'price' | 'collection';
+interface WalletAssets {
+  assets: Asset[];
+  count: number;
+}
 
 const MyNftsPage = () => {
   const { address } = useAccount();
-  const { myNfts } = useAppSelector((state) => state.myNfts);
-  const [myNftsData, setMyNftsData] = useState<IAssets[] | null>();
-  const [filteredData, setFilteredData] = useState<IAssets[] | null>();
-  const [ethCurrency, setEthCurrency] = useState<IEthCurrency | null>();
-  const [collectionSumm, setCollectionSumm] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [summaryLoading, setSummaryLoading] = useState(false);
-  const [summaryErr, setSummErr] = useState(false);
+  const [walletsOwned, setWalletsOwned] = useState<WalletAssets | null>(null);
+  const [walletsCollections, setWalletCollections] = useState<Collection[] | null>(null);
   const { pageNumber, handlePageClick } = usePaginate();
-  const [error, setError] = useState('');
+  const limit = 20;
   const [filterCategory, setFilterCategory] = useState(initialFilter);
   const [searchValue, setSearchvalue] = useState('');
 
-  const dispatch = useAppDispatch();
   const { copied, copyHandler, copyRef } = useCopy(address);
 
   const [priceFilter, collectionFilter] = filterCategory;
 
-  const convertCollectionTokens = () => {
-    const collectionsToken: Record<string, string[]> = {};
-    myNfts.assets.forEach((item) => {
-      if (!collectionsToken[item.collectionAddress]) {
-        collectionsToken[item.collectionAddress] = [item.collectionTokenId];
-      } else {
-        collectionsToken[item.collectionAddress] = [...collectionsToken[item.collectionAddress], item.collectionTokenId];
-      }
-    });
-    return collectionsToken;
-  };
-
-  const handleCategoryFilter = (value: string, filterName: FilterTypes) => {
-    setFilterCategory((prev) => {
-      return prev.map((val) => (val.name === filterName ? { ...val, val: value } : val));
-    });
-  };
-
-  const handleFilter = async (collectionName: string, collectAddress: string) => {
-    handleCategoryFilter(collectionName, 'collection');
-    const collectionAddTokens = convertCollectionTokens();
-    if (myNftsData?.length) {
-      const myNFTsCopy = [...myNftsData].filter((item) => item.collectionName === collectionName);
-      setFilteredData(myNFTsCopy);
-    }
-    try {
-      setSummaryLoading(true);
-      const summaryData: ISummaryTokens[] = await getSummaryTokenStats(collectAddress, collectionAddTokens[collectAddress].slice(0, 10), 'usd');
-      const collSum = summaryData.reduce((aggr, coll) => aggr + coll.price, 0);
-      setCollectionSumm(collSum);
-    } catch (e) {
-      setSummErr(true);
-    } finally {
-      setSummaryLoading(false);
-    }
-  };
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchvalue(e.target.value);
-    if (myNftsData?.length) {
-      const dataCopy = [...myNftsData].filter((item) => item.collectionName.toLowerCase().includes(e.target.value.toLowerCase()));
-
-      setFilteredData(dataCopy);
-    }
-  };
-
   useEffect(() => {
-    setFilterCategory(initialFilter);
-    dispatch(fetchMyNfts({ address: address as string, page: pageNumber }));
-    const ethCurrencyUsd = async () => {
-      const res = await getEthCurrency();
-      setEthCurrency(res);
+    const getWalletAssets = async () => {
+      const res = await getWalletUpshot<WalletAssets>({ walletAddress: ETHWallet, limit, offset: (pageNumber - 1) * limit, include_count: true }, 'assets/owned');
+      setWalletsOwned(res);
     };
-    ethCurrencyUsd();
+    getWalletAssets();
   }, [address, pageNumber]);
 
   useEffect(() => {
-    if (myNfts.assets.length) {
-      setLoading(true);
-      const collectAddress = myNfts.assets.map((item) => item.collectionAddress);
-      const uniqueCollectionAddress = [...new Set(collectAddress)];
-      // const collectionAddressTok = convertCollectionTokens();
+    const getWalletCollections = async () => {
+      const res = await getWalletUpshot<{ collections: Collection[] }>(
+        {
+          walletAddress: ETHWallet,
+        },
+        'collections/owned'
+      );
+      setWalletCollections(res.collections);
+    };
+    getWalletCollections();
+  }, []);
 
-      try {
-        const getFloorPrice = async () => {
-          const chunkedArr = [];
-          let i = 0;
-          while (i < uniqueCollectionAddress.length) {
-            chunkedArr.push(uniqueCollectionAddress.slice(i, i + 10));
-            i += 10;
-          }
-
-          // const rarityPromise: Promise<IRarityTokens[]>[] = [];
-
-          // Object.entries(collectionAddressTok).forEach(([key, value]) => {
-          //   let j = 0;
-          //   while (j < value.length) {
-          //     rarityPromise.push(getTokenRarityByCollection(key, value.slice(j, j + 10)));
-          //     j += 10;
-          //   }
-          // });
-          // const rarityData = await Promise.allSettled(rarityPromise);
-
-          const promises = chunkedArr.map((chunk) => getCollectionFloorPrice(chunk));
-          const results = await Promise.allSettled(promises);
-
-          const resultValues = results.reduce((agg: ICollection[], rar) => {
-            if (rar.status === 'fulfilled' && rar.value) {
-              agg.push(...rar.value.collections);
-            }
-            return agg;
-          }, []);
-
-          const modified = myNfts.assets.map((item) => {
-            const filtered = resultValues.find((val) => val.collection_address === item.collectionAddress.toLocaleLowerCase());
-            return {
-              ...item,
-              floor: filtered?.marketplaces.find((market) => market.marketplace === 'OpenSea' || market.marketplace === 'Blur')?.floor_price,
-            };
-          });
-
-          // const rarityTokens = rarityData.reduce((agg: IRarityTokens[], rar) => {
-          //   if (rar.status === 'fulfilled' && rar.value) {
-          //     agg.push(...rar.value);
-          //   }
-          //   return agg;
-          // }, []);
-
-          // const updatedAssets = modified?.map((prevState) => {
-          //   const findToken = rarityTokens?.find((item) => item.token_id === prevState.collectionTokenId);
-          //   return {
-          //     ...prevState,
-          //     rarity: findToken?.rarity_score || 0,
-          //   };
-          // });
-          setLoading(false);
-
-          setMyNftsData(modified);
-        };
-        getFloorPrice();
-      } catch (e) {
-        setError((e as Error).message);
-        setLoading(false);
-      }
-    }
-  }, [myNfts]);
-
+  const handleFilter = async (collectionName: string, collectAddress: string) => {
+    setFilterCategory((prev) => {
+      return prev.map((val) => (val.name === 'collection' ? { ...val, val: collectionName } : val));
+    });
+    const filteredAssets = await getWalletUpshot<WalletAssets>(
+      {
+        walletAddress: ETHWallet,
+        collection_id_or_slugs: [collectAddress],
+      },
+      'assets/owned'
+    );
+    setWalletsOwned(filteredAssets);
+  };
+  const handleCategoryFilter = (name: string) => {};
+  const handleSearch = () => {};
   return (
     <div className='pt-5 px-8 pb-16 md:pb-4 max-w-[1300px] 2xl:mx-auto'>
       <div className=''>
@@ -204,7 +108,7 @@ const MyNftsPage = () => {
       </div>
       <div className='flex flex-col pl-[13px] lg:flex-row border rounded mt-[22px] bg-light-blue-grey py-4 px-[14px] gap-3 xl:flex-nowrap'>
         <div className='lg:max-w-[417px] py-[22px] w-full bg-white dark:border'>
-          <Dropdown overlay={<MenuDropdown data={myNfts.assets} handler={handleFilter} />} trigger={['click']}>
+          <Dropdown overlay={<MenuDropdown data={walletsCollections} handler={handleFilter} />} trigger={['click']}>
             <div className='pl-[18px] pr-[28px] flex justify-between items-center rounded'>
               <div className='flex justify-center items-center gap-5'>
                 <span>
@@ -212,8 +116,8 @@ const MyNftsPage = () => {
                 </span>
                 <div className='flex flex-col'>
                   <span className='text-[14px] placeholder:text-base text-dark-blue'>{collectionFilter.val || 'Filter By Collection'}</span>
-                  {summaryLoading ? <div className='loader w-2 h-4'></div> : <p className='text-xs text-dark-blue font-normal'>{USDDollarFormatter(collectionSumm)}</p>}
-                  {summaryErr ? <span>something went wrong</span> : null}
+                  {/* {summaryLoading ? <div className='loader w-2 h-4'></div> : <p className='text-xs text-dark-blue font-normal'>{USDDollarFormatter(collectionSumm)}</p>}
+                  {summaryErr ? <span>something went wrong</span> : null} */}
                 </div>
               </div>
               <span className='flex flex-col text-input'>
@@ -248,7 +152,7 @@ const MyNftsPage = () => {
               .filter((categ) => categ.val)
               .map((category) => {
                 return (
-                  <div key={category.name} className='flex gap-[18px] items-center bg-light-gray py-2 px-4 rounded w-max' onClick={() => handleCategoryFilter('', category.name as FilterTypes)}>
+                  <div key={category.name} className='flex gap-[18px] items-center bg-light-gray py-2 px-4 rounded w-max' onClick={() => handleCategoryFilter('')}>
                     <span className='font-medium'>{category.val}</span>
                     <FontAwesomeIcon icon={faSquareXmark} className='text-dark-blue w-[13px] h-[13px]' />
                   </div>
@@ -259,31 +163,16 @@ const MyNftsPage = () => {
       </div>
 
       <div className='mt-5 grid grid-cols-2 place-items-center lg:grid-cols-6 gap-x-3 gap-y-4'>
-        {(collectionFilter.val || searchValue) &&
-          filteredData?.map((nft) => {
-            return ethCurrency && <NFTCard key={nft.collectionTokenId} asset={nft} ethUSDValue={+ethCurrency.ethusd} />;
-          })}
-        {error && <p className='text-sm text-dark-blue'>Collections are dead</p>}
-        {loading ? (
+        {!walletsOwned?.assets.length ? (
           <Loader />
         ) : (
-          ethCurrency &&
-          !collectionFilter.val &&
-          !searchValue &&
-          myNftsData
-            ?.filter((item) => item.imageUrl && item.collectionName)
-            .sort((a, b) => {
-              const aValue = a.floor ?? 0;
-              const bValue = b.floor ?? 0;
-              return priceFilter.val === 'high' ? bValue - aValue : aValue - bValue;
-            })
-            .map((asset) => {
-              return ethCurrency && <NFTCard key={asset.collectionTokenId} asset={asset} ethUSDValue={+ethCurrency.ethusd} />;
-            })
+          walletsOwned?.assets.map((nft) => {
+            return <NFTCard key={nft.id} asset={nft} ethUSDValue={0} />;
+          })
         )}
       </div>
       <div className='mt-4'>
-        <Paginataion className='flex' totalPages={myNfts.totalPages} handlePageClick={handlePageClick} />
+        <Paginataion className='flex' totalPages={walletsOwned?.count ? walletsOwned.count / limit : 1} handlePageClick={handlePageClick} />
       </div>
     </div>
   );

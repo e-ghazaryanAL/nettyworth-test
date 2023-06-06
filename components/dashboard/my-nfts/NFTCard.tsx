@@ -1,7 +1,8 @@
+import { Asset } from '../../../redux/top-sales/upshotmodel';
 import { IAssets } from '../../../redux/wallet/model';
 
 type NFTCardProps = {
-  asset: IAssets;
+  asset: Asset;
   ethUSDValue: number;
 };
 
@@ -12,14 +13,14 @@ const NFTCard: React.FC<NFTCardProps> = ({ asset, ethUSDValue }) => {
         <span className='text-white text-[10px] font-medium px-[13px] py-[4px]'>Rarity {typeof asset.rarity === 'number' && (asset.rarity * 1000).toFixed(2)}</span>
       </div> */}
       <div className='mt-1'>
-        <img src={asset.imageUrl} className='w-[165px] h-[165px] rounded-sm object-cover' alt='img' />
+        <img src={asset.original_media_url} className='w-[165px] h-[165px] rounded-sm object-cover' alt='img' />
       </div>
       <div className='flex flex-col justify-between h-full'>
         <p className='text-sm text-dark-blue break-all mt-[4px]'>{asset.name}</p>
         <div className='flex justify-center pt-1'>
           <div className='flex flex-col items-center'>
             <span className='text-[10px] font-medium'>Floor</span>
-            <span className='text-primary font-medium'>${asset.floor ? Math.round(+asset.floor * ethUSDValue) : 0}</span>
+            <span className='text-primary font-medium'>N/A</span>
           </div>
         </div>
         {/* <div className='flex flex-col'>

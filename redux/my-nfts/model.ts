@@ -4,11 +4,6 @@ export interface IParams {
   page: number;
 }
 
-export type WalletDetailOptions = {
-  address: string;
-  page: number;
-};
-
 export interface IMyNftsState {
   myNfts: {
     owner: string;
