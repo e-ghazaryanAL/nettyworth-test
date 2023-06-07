@@ -19,19 +19,21 @@ import { truncateAddress } from '../../../utils/formatter';
 import { getWalletUpshot } from '../../../api/api';
 import { Asset } from '../../../redux/top-sales/upshotmodel';
 import { Collection } from '../../../redux/top-sales/model';
+import { useDebounce } from '../../../hooks/useDebounce';
 
 const initialFilter = [
   {
     name: 'price',
     val: '',
+    selected: '',
   },
   {
     name: 'collection',
     val: '',
+    selected: '',
   },
 ];
 
-type FilterTypes = 'price' | 'collection';
 interface WalletAssets {
   assets: Asset[];
   count: number;
@@ -45,7 +47,8 @@ const MyNftsPage = () => {
   const limit = 20;
   const [filterCategory, setFilterCategory] = useState(initialFilter);
   const [searchValue, setSearchvalue] = useState('');
-
+  const [searchCollection, setSearchCollection] = useState<string[]>([]);
+  const debouncedVal = useDebounce(searchValue);
   const { copied, copyHandler, copyRef } = useCopy(address);
 
   const [priceFilter, collectionFilter] = filterCategory;
@@ -53,12 +56,22 @@ const MyNftsPage = () => {
   useEffect(() => {
     const getWalletAssets = async () => {
       if (address) {
-        const res = await getWalletUpshot<WalletAssets>({ walletAddress: address, limit, offset: (pageNumber - 1) * limit, include_count: true }, 'assets/owned');
+        const res = await getWalletUpshot<WalletAssets>(
+          {
+            walletAddress: address,
+            limit,
+            offset: (pageNumber - 1) * limit,
+            include_count: true,
+            ...((collectionFilter.val || searchCollection.length) && { collection_id_or_slugs: searchCollection.length ? searchCollection : [collectionFilter.selected] }),
+            ...(priceFilter.val && { sort_direction: priceFilter.selected as 'ASC' | 'DESC' }),
+          },
+          'assets/owned'
+        );
         setWalletsOwned(res);
       }
     };
     getWalletAssets();
-  }, [address, pageNumber]);
+  }, [address, pageNumber, priceFilter.val, collectionFilter.val, debouncedVal]);
 
   useEffect(() => {
     const getWalletCollections = async () => {
@@ -77,26 +90,33 @@ const MyNftsPage = () => {
 
   const handleFilter = async (collectionName: string, collectAddress: string) => {
     setFilterCategory((prev) => {
-      return prev.map((val) => (val.name === 'collection' ? { ...val, val: collectionName } : val));
+      return prev.map((val) => (val.name === 'collection' ? { ...val, val: collectionName, selected: collectAddress } : val));
     });
-    if (address) {
-      const filteredAssets = await getWalletUpshot<WalletAssets>(
-        {
-          walletAddress: address,
-          collection_id_or_slugs: [collectAddress],
-        },
-        'assets/owned'
-      );
-      setWalletsOwned(filteredAssets);
-    }
   };
-  const handleSort = (sortOrder: 'ASC' | 'DESC') => {};
+  const handleSort = async (sortOrder: 'ASC' | 'DESC', name: string) => {
+    setFilterCategory((prev) => {
+      return prev.map((val) => (val.name === name ? { ...val, selected: sortOrder, val: sortOrder === 'DESC' ? 'Highest' : 'Lowest' } : val));
+    });
+  };
   const handleCategoryFilter = (name: string) => {
     setFilterCategory((prev) => {
       return prev.map((val) => (val.name === name ? { ...val, val: '' } : val));
     });
   };
-  const handleSearch = () => {};
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchvalue(e.target.value);
+    const searchName = e.target.value.toLowerCase();
+    const uniqueSlugs = new Set<string>();
+
+    walletsOwned?.assets.forEach((asset) => {
+      if (asset.name.toLowerCase().includes(searchName)) {
+        uniqueSlugs.add(asset.address);
+      }
+    });
+
+    setSearchCollection(searchName ? [...uniqueSlugs] : []);
+  };
   return (
     <div className='pt-5 px-8 pb-16 md:pb-4 max-w-[1300px] 2xl:mx-auto'>
       <div className=''>
@@ -139,7 +159,7 @@ const MyNftsPage = () => {
           </Dropdown>
         </div>
         <div className='lg:max-w-[235px] w-full 2xl:max-w-[390px] dark:border'>
-          <Dropdown overlay={<PriceDropDown handler={handleCategoryFilter} />} trigger={['click']}>
+          <Dropdown overlay={<PriceDropDown handler={handleSort} />} trigger={['click']}>
             <div className='pl-6 pr-[28px] lg:pr-4 h-full py-[22px] bg-white flex gap-[85px] justify-between items-center rounded'>
               <span className='text-[14px] placeholder:text-base text-dark-blue'>Sort by Price</span>
               <span className='flex flex-col text-input'>
@@ -177,13 +197,13 @@ const MyNftsPage = () => {
         {!walletsOwned?.assets.length ? (
           <Loader />
         ) : (
-          walletsOwned?.assets.map((nft) => {
+          walletsOwned?.assets.slice(0, 20).map((nft) => {
             return <NFTCard key={nft.id} asset={nft} ethUSDValue={0} />;
           })
         )}
       </div>
       <div className='mt-4'>
-        <Paginataion className='flex' totalPages={walletsOwned?.count ? walletsOwned.count / limit : 1} handlePageClick={handlePageClick} />
+        <Paginataion className='flex' totalPages={walletsOwned?.count ? Math.ceil(walletsOwned.count / limit) : 1} handlePageClick={handlePageClick} />
       </div>
     </div>
   );

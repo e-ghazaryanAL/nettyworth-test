@@ -17,13 +17,13 @@ const MenuDropdown = ({ data, handler }: { data: null | Collection[]; handler: (
   );
 };
 
-const PriceDropDown = ({ handler }: { handler: (order: string, filterName: 'price' | 'collection') => void }) => {
+const PriceDropDown = ({ handler }: { handler: (sortOrder: 'ASC' | 'DESC', name: string) => void }) => {
   return (
     <Menu className='top-sales-dropdown h-[110px] overflow-auto'>
-      <MenuItem key='low' onClick={() => handler('low', 'price')}>
+      <MenuItem key='low' onClick={() => handler('ASC', 'price')}>
         Lowest Price
       </MenuItem>
-      <MenuItem key='high' onClick={() => handler('high', 'price')}>
+      <MenuItem key='high' onClick={() => handler('DESC', 'price')}>
         Highest Price
       </MenuItem>
     </Menu>
