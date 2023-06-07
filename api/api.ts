@@ -147,6 +147,10 @@ export const getUserCryptoFav = async () => {
   return getRequest('/favorites?category=CryptoSales', {}, false, true);
 };
 
+export const getUserNFTFav = async <T>(): Promise<T> => {
+  return getRequest('/favorites?category=NFTSales', {}, false, true);
+};
+
 export const getTopSalesDetailFilters = async (slug: string) => {
   return postRequest(`/nft-top-sales/api/assets/traits/${slug}`);
 };

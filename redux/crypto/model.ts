@@ -78,10 +78,20 @@ export interface ICryptoFilters {
   data: Datum[];
 }
 
+export interface IUserFavCrypto {
+  id: number;
+  itemId: string;
+  category: string;
+  userId: number;
+  subscriberId: any;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ICryptoCurr {
   status: Status | null;
   data: IData[];
-  favourites: any;
+  favourites: IUserFavCrypto[];
 }
 
 interface IDetailData extends IData {

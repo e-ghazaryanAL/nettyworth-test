@@ -40,7 +40,7 @@ const CryptoPricePage = () => {
   const [page, setPage] = useState(1);
   const router = useRouter();
   const isAuth = useAuthenticate();
-
+  console.log({ favorites });
   const cryptoColumns = useMemo(() => {
     return [
       {
@@ -134,11 +134,11 @@ const CryptoPricePage = () => {
   }, [cryptoSymbol.symbol, isConnected]);
 
   useEffect(() => {
-    const favoriteItems = cryptoData.data.filter((item) => {
-      return item?.favorite;
-    });
-
-    setFavorites((prev) => new Set([...Array.from(prev), ...favoriteItems.map(({ id }) => id)]));
+    if (isAuth) {
+      const userFavCrypto = cryptoData.favourites;
+      const modified = userFavCrypto.map((fav) => fav.itemId);
+      setFavorites(new Set(modified));
+    }
   }, [cryptoData.data.length]);
 
   useEffect(() => {
@@ -163,7 +163,7 @@ const CryptoPricePage = () => {
         return {
           ...(isAuth && {
             heart: (
-              <button onClick={(e) => handleLikeToggle(e, { itemId: crypto.id, category: 'CryptoSales' })}>
+              <button onClick={(e) => handleLikeToggle(e, { itemId: `${crypto.id}`, category: 'CryptoSales' })}>
                 <HeartIcon className='w-4 h-4' fill={`${favorites.has(crypto.id) ? '#ff066a' : '#A9B0C4'}`} />
               </button>
             ),

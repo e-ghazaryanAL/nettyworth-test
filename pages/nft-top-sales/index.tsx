@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getUserNFTFav } from '../../api/api';
 
 import Heart from '../../assets/icons/icon-fav-heart.svg';
 import { Paginataion } from '../../components/dashboard/news/Pagination';
@@ -27,7 +28,7 @@ const TopSalesPage = () => {
   const dispatch = useAppDispatch();
   const [listBoxActive, setListBoxActive] = useState(0);
   const [view, setView] = useState<string>('list');
-  const { favorites, handleLikeToggle } = useFavourite();
+  const { favorites, handleLikeToggle, setFavorites } = useFavourite();
   const [tableData, setTableData] = useState<any[] | []>([]);
   const iAuth = useAuthenticate();
   const limit = 20;
@@ -59,6 +60,15 @@ const TopSalesPage = () => {
       })
     );
   }, [pageNumber]);
+  console.log({ favorites });
+  useEffect(() => {
+    const getNFTfavorites = async () => {
+      const res = await getUserNFTFav<{ itemId: string }[]>();
+      const converted = res.map((nft) => nft.itemId);
+      setFavorites(new Set(converted));
+    };
+    getNFTfavorites();
+  }, [favorites.size]);
 
   useEffect(() => {
     if (NftTopSalesCollections?.collections) {
@@ -68,8 +78,8 @@ const TopSalesPage = () => {
           volume: Math.round(hexToETh(nft.volume[`wei_${selectedDate}` as keyof typeof nft.volume])),
           ...(iAuth && {
             heart: (
-              <button onClick={(e) => handleLikeToggle(e, { category: 'NFTSales', itemId: nft.id })}>
-                <Heart fill={`${favorites.has(nft.id) ? '#ff066a' : '#A9B0C4'}`} className='w-4 h-4' />
+              <button onClick={(e) => handleLikeToggle(e, { category: 'NFTSales', itemId: nft.contract_address })}>
+                <Heart fill={`${favorites.has(nft.contract_address) ? '#ff066a' : '#A9B0C4'}`} className='w-4 h-4' />
               </button>
             ),
           }),
@@ -97,7 +107,7 @@ const TopSalesPage = () => {
       });
       setTableData(convertedData);
     }
-  }, [NftTopSalesCollections, selectedDate]);
+  }, [NftTopSalesCollections, selectedDate, favorites.size]);
   return (
     <div className='pt-5 bg-white flex flex-col pb-20 max-w-[1300px] 2xl:mx-auto md:pb-8'>
       <TopSalesHeading title='Top Sales' text='View the latest top NFT sales on NettyWorth, ranked by volume, floor price, and holders. You can search for the most popular NFTs on the market, analyze trends and get the data you need from the best NFT platform.' />

@@ -11,7 +11,7 @@ import { useAccount } from 'wagmi';
 
 import { PortfolioCard } from './PortfolioCard';
 import { PortfolioCardList } from './PortfolioList';
-import { getUserCryptoFav, graphqlClient } from '../../../api/api';
+import { getUserCryptoFav, getUserNFTFav, graphqlClient } from '../../../api/api';
 import { getUpcomingBydate } from '../../../api/apoloQueries';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { fetchCryptoCurrencyMount } from '../../../redux/crypto/cryptoSlice';
@@ -44,13 +44,23 @@ const DashboardSidebar = () => {
   const [weekdata, setWeekData] = useState<IUpcomingPost[]>([]);
   const { NftTopSalesCollections } = useAppSelector((state) => state.sales);
   const [userCrypto, setUserCrypto] = useState<UserCryptoFavourite[]>([]);
+
   const dispatch = useAppDispatch();
   const [accordion, setAccordion] = useState<Set<string>>(new Set());
-
   useEffect(() => {
     getUserCryptoFav().then((res) => {
       const data = Object.values(res);
       setUserCrypto(data as UserCryptoFavourite[]);
+    });
+    getUserNFTFav<{ itemId: string }[]>().then((res) => {
+      const response = res.map((nft) => nft.itemId);
+      dispatch(
+        fetchCollectionsByPage({
+          limit: 5,
+          offset: 0,
+          collection_id_or_slugs: response,
+        })
+      );
     });
     const fetchWeekData = async () => {
       const data = await graphqlClient.request<IUpcomingNfts>(
@@ -69,7 +79,6 @@ const DashboardSidebar = () => {
     };
     fetchWeekData();
     dispatch(fetchCryptoCurrencyMount({ start: 1, limit: 5 }));
-    dispatch(fetchCollectionsByPage({ limit: 5, offset: 0 }));
   }, []);
 
   const handleClick = (title: string | undefined) => {
