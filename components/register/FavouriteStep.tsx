@@ -50,8 +50,8 @@ const FavouriteStep: React.FC<FavouriteStepProps> = ({ nextStep }) => {
                     <img src={nft.image_url} className='w-[25px] h-[25px] rounded' />
                     <span className='font-medium'>{nft?.name}</span>
                   </div>
-                  <button onClick={(e) => handleLikeToggle(e, { category: 'NFTSales', itemId: nft.id })}>
-                    <HeartIcon className='w-4 h-4' fill={`${favorites.has(nft.id) ? '#ff066a' : '#dfe3ee'}`} />
+                  <button onClick={(e) => handleLikeToggle(e, { category: 'NFTSales', itemId: nft.contract_address })}>
+                    <HeartIcon className='w-4 h-4' fill={`${favorites.has(nft.contract_address) ? '#ff066a' : '#dfe3ee'}`} />
                   </button>
                 </div>
               );
