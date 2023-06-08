@@ -44,6 +44,7 @@ const DashboardSidebar = () => {
   const [weekdata, setWeekData] = useState<IUpcomingPost[]>([]);
   const { NftTopSalesCollections } = useAppSelector((state) => state.sales);
   const [userCrypto, setUserCrypto] = useState<UserCryptoFavourite[]>([]);
+  const [isFavNFT, setIsFavNFT] = useState(false);
 
   const dispatch = useAppDispatch();
   const [accordion, setAccordion] = useState<Set<string>>(new Set());
@@ -54,6 +55,9 @@ const DashboardSidebar = () => {
     });
     getUserNFTFav<{ itemId: string }[]>().then((res) => {
       const response = res.map((nft) => nft.itemId);
+      if (response.length) {
+        setIsFavNFT(true);
+      }
       dispatch(
         fetchCollectionsByPage({
           limit: 5,
@@ -164,7 +168,7 @@ const DashboardSidebar = () => {
           })}
         </PortfolioCard> */}
         <div className='mt-4 flex flex-col'>
-          <PortfolioCard title={{ black: 'NFTs', blue: 'Sales', red: 'Floor Price' }}>
+          <PortfolioCard title={{ black: `${isFavNFT ? 'Favorite' : 'NFTs'}`, blue: `${isFavNFT ? 'NFTs' : 'Sales'}`, red: 'Floor Price' }}>
             {NftTopSalesCollections?.collections
               ?.filter((nft) => nft.image_url)
               .map((sale, idx) => {

@@ -12,11 +12,13 @@ const AlertCard: React.FC<AlertCardProps> = ({ data }) => {
   const notificationCategory: Record<string, string> = {
     Upcoming: 'Upcoming NFTs Releasing Today',
     News: 'Daily NettyWorth News',
+    NFTSales: "Favourite NFT's",
   };
 
   const notifDescription: Record<string, string | undefined> = {
     Upcoming: `${data.name} ${moment(data.saleDate).format('h A')}`,
     News: data.title,
+    NFTSales: `${data.collection_name} ${data.floor_price} ETH`,
   };
 
   return (

@@ -164,7 +164,7 @@ const CryptoPricePage = () => {
           ...(isAuth && {
             heart: (
               <button onClick={(e) => handleLikeToggle(e, { itemId: `${crypto.id}`, category: 'CryptoSales' })}>
-                <HeartIcon className='w-4 h-4' fill={`${favorites.has(crypto.id) ? '#ff066a' : '#A9B0C4'}`} />
+                <HeartIcon className='w-4 h-4' fill={`${favorites.has(`${crypto.id}`) ? '#ff066a' : '#A9B0C4'}`} />
               </button>
             ),
           }),
