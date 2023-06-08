@@ -1,9 +1,9 @@
 FROM node:18.16
 WORKDIR /app
+RUN mkdir /app/pages
 COPY package.json ./
-RUN npm install -g npm@latest
-RUN npm i -f
+RUN npm i -g npm@latest
+RUN yarn install --production && yarn build
 COPY . .
-RUN npm run build -f  # enable for NextJS only
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
