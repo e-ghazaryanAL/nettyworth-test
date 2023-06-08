@@ -8,7 +8,7 @@ import { menuItems } from '../../constant';
 
 export const fetchCollectionsByPage = createAsyncThunk<ITopSalesData, ITopSalesDataParams, { rejectValue: string }>('sales/fetchByPage', async (params, { rejectWithValue }) => {
   try {
-    const response = await getTopSalesCollection(params);
+    const response = await getTopSalesCollection<ITopSalesData>(params);
     return response;
   } catch (e) {
     return rejectWithValue((e as AxiosError).message);
@@ -17,7 +17,7 @@ export const fetchCollectionsByPage = createAsyncThunk<ITopSalesData, ITopSalesD
 
 export const fetchCollection = createAsyncThunk('sales/fetchCollection', async (slug: string, { rejectWithValue }) => {
   try {
-    const response = await getTopSalesCollection({ slug });
+    const response = await getTopSalesCollection<any>({ slug });
     return response;
   } catch (e) {
     return rejectWithValue(e);

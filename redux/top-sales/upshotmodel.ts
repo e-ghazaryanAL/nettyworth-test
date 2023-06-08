@@ -1,4 +1,4 @@
-export interface Asset {
+export interface Asset<T = Trait[]> {
   id: string;
   token_id: string;
   address: string;
@@ -9,7 +9,7 @@ export interface Asset {
   video_preview_url: any;
   is_flagged: boolean;
   name: string;
-  traits: Trait[];
+  traits: T;
   collection: Collection;
   rarity_score: number;
   rarity_rank: number;
@@ -81,4 +81,43 @@ export interface CollectionTraitTypes {
 export interface TraitType {
   type: string;
   count: number;
+}
+
+interface Change2 {
+  wei_1d: number;
+  wei_7d: number;
+  wei_30d: number;
+}
+interface Floor {
+  wei: string;
+  usd: number;
+  change: Change;
+}
+
+interface AvgAppraisal {
+  wei: string;
+  change: Change2;
+}
+
+interface Volume extends Change2 {
+  wei_all_time: string;
+  change: Change2;
+}
+
+export interface ITraitMetadata {
+  id: string;
+  type: string;
+  display_type: string;
+  value: string;
+  count: number;
+  is_meta: boolean;
+  is_null: boolean;
+  image_url: string;
+  rarity: number;
+  timestamp: string;
+  floor: Floor;
+  last_sale: LastSale;
+  avg_appraisal: AvgAppraisal;
+  volume: Volume;
+  floor_avg_appraisal_relative_delta: number;
 }

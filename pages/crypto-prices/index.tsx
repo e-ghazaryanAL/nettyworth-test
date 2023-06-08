@@ -40,7 +40,7 @@ const CryptoPricePage = () => {
   const [page, setPage] = useState(1);
   const router = useRouter();
   const isAuth = useAuthenticate();
-  console.log({ favorites });
+
   const cryptoColumns = useMemo(() => {
     return [
       {

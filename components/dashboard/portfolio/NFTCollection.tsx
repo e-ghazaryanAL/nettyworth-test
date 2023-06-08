@@ -42,7 +42,7 @@ const NFTCollection: React.FC = () => {
               })}
           </div>
         )}
-        <div className={`mt-5 mb-6 md:px-0 hidden ${!data?.ownedAssets ? 'hidden' : ''}`}>
+        <div className={`mt-5 mb-6 md:px-0 ${data?.ownedAssets?.length ? '' : 'hidden'}`}>
           <div className='flex items-center gap-2 justify-end'>
             <p className='p-small text-primary'>
               <Link href='portfolio/nfts'>View all</Link>

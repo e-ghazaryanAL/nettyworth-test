@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAccount, useConnect } from 'wagmi';
 
-import { getEthCurrency, getWalletBalance, getWalletTotalCost, getWalletUpshot } from '../../api/api';
+import { ETHWallet, getEthCurrency, getWalletBalance, getWalletTotalCost, getWalletUpshot } from '../../api/api';
 import { ConnectWallet } from '../../components/dashboard/portfolio/ConnectWallet';
 import { DashboardSidebar } from '../../components/dashboard/portfolio/DashboardSidebar';
 import { NFTCollection } from '../../components/dashboard/portfolio/NFTCollection';

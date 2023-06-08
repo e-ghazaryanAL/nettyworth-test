@@ -387,9 +387,14 @@ const getfromUpshot = async (url: string, params: Record<string, any>) => {
   return nftData.data;
 };
 
-export const getTopSalesCollection = async (params: ITopSalesDataParams) => {
+export const getTopSalesCollection = async <T>(params: ITopSalesDataParams): Promise<T> => {
   const modifiedparams = buildParams(params);
   return getfromUpshot('/collections', modifiedparams);
+};
+
+export const getMultipleAssets = async <T>(params: { asset_ids: string[]; include_trait_stats: boolean }): Promise<T> => {
+  const queryParams = buildParams(params);
+  return getfromUpshot('/assets', queryParams);
 };
 
 export const getTopSalesDetail = async (params: CollectionsAssetsParams, url: string) => {

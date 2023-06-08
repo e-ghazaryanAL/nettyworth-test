@@ -6,6 +6,7 @@ import Dropdown from 'rc-dropdown';
 import { useAccount } from 'wagmi';
 
 import 'rc-dropdown/assets/index.css';
+import { ETHWallet, getMultipleAssets, getTopSalesCollection, getWalletUpshot } from '../../../api/api';
 import IconDetection from '../../../assets/icons/icon-detection.svg';
 import CopyIcon from '../../../assets/icons/icon-duplicate.svg';
 import SearchIcon from '../../../assets/icons/icon-search.svg';
@@ -14,12 +15,11 @@ import NFTCard from '../../../components/dashboard/my-nfts/NFTCard';
 import { Paginataion } from '../../../components/dashboard/news/Pagination';
 import { Loader } from '../../../components/Loader';
 import useCopy from '../../../hooks/useCopy';
-import usePaginate from '../../../hooks/usePaginate';
-import { truncateAddress } from '../../../utils/formatter';
-import { getWalletUpshot } from '../../../api/api';
-import { Asset } from '../../../redux/top-sales/upshotmodel';
-import { Collection } from '../../../redux/top-sales/model';
 import { useDebounce } from '../../../hooks/useDebounce';
+import usePaginate from '../../../hooks/usePaginate';
+import { Collection } from '../../../redux/top-sales/model';
+import { Asset, ITraitMetadata } from '../../../redux/top-sales/upshotmodel';
+import { truncateAddress, USDDollarFormatter } from '../../../utils/formatter';
 
 const initialFilter = [
   {
@@ -35,7 +35,7 @@ const initialFilter = [
 ];
 
 interface WalletAssets {
-  assets: Asset[];
+  assets: (Asset & { floor: number; traitFloor: number })[];
   count: number;
 }
 
@@ -52,7 +52,10 @@ const MyNftsPage = () => {
   const { copied, copyHandler, copyRef } = useCopy(address);
 
   const [priceFilter, collectionFilter] = filterCategory;
-
+  const collectionSum = walletsOwned?.assets.reduce((prev, asset) => {
+    const assetFloor = asset?.floor || 0;
+    return prev + assetFloor;
+  }, 0);
   useEffect(() => {
     const getWalletAssets = async () => {
       if (address) {
@@ -67,7 +70,35 @@ const MyNftsPage = () => {
           },
           'assets/owned'
         );
-        setWalletsOwned(res);
+        if (!res) return;
+        const filteredCollections = res.assets.map((coll) => coll.address);
+        const filteredAssetsIds = res.assets.map((asset) => asset.id);
+
+        const userCollections = await getTopSalesCollection<{ collections: Collection[] }>({
+          collection_id_or_slugs: filteredCollections,
+        });
+        const assetsTraits = await getMultipleAssets<Asset<ITraitMetadata[]>[]>({
+          asset_ids: filteredAssetsIds,
+          include_trait_stats: true,
+        });
+        const assetsFloor = res.assets.map((asset) => {
+          const existColl = userCollections.collections.find((nft) => nft.id === asset.address);
+          const existTrait = assetsTraits.find((token) => token.id === asset.id);
+          const highestTraitFloorUSD = existTrait?.traits.reduce((max, obj) => {
+            const floorUsd = obj.floor?.usd || 0;
+            return floorUsd > max ? obj.floor.usd : max;
+          }, 0);
+
+          return {
+            ...asset,
+            floor: existColl?.floor.usd || 0,
+            traitFloor: highestTraitFloorUSD || 0,
+          };
+        });
+        setWalletsOwned({
+          assets: assetsFloor,
+          count: res.count,
+        });
       }
     };
     getWalletAssets();
@@ -147,8 +178,8 @@ const MyNftsPage = () => {
                 </span>
                 <div className='flex flex-col'>
                   <span className='text-[14px] placeholder:text-base text-dark-blue'>{collectionFilter?.val || 'Filter By Collection'}</span>
-                  {/* {summaryLoading ? <div className='loader w-2 h-4'></div> : <p className='text-xs text-dark-blue font-normal'>{USDDollarFormatter(collectionSumm)}</p>}
-                  {summaryErr ? <span>something went wrong</span> : null} */}
+                  {!collectionSum ? <div className='loader w-2 h-4'></div> : <p className='text-xs text-dark-blue font-normal'>{USDDollarFormatter(collectionSum)}</p>}
+                  {/* {summaryErr ? <span>something went wrong</span> : null} */}
                 </div>
               </div>
               <span className='flex flex-col text-input'>
@@ -198,7 +229,7 @@ const MyNftsPage = () => {
           <Loader />
         ) : (
           walletsOwned?.assets.slice(0, 20).map((nft) => {
-            return <NFTCard key={nft.id} asset={nft} ethUSDValue={0} />;
+            return <NFTCard key={nft.id} asset={nft} />;
           })
         )}
       </div>

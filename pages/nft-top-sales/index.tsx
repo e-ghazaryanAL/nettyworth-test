@@ -60,14 +60,16 @@ const TopSalesPage = () => {
       })
     );
   }, [pageNumber]);
-  console.log({ favorites });
+
   useEffect(() => {
-    const getNFTfavorites = async () => {
-      const res = await getUserNFTFav<{ itemId: string }[]>();
-      const converted = res.map((nft) => nft.itemId);
-      setFavorites(new Set(converted));
-    };
-    getNFTfavorites();
+    if (iAuth) {
+      const getNFTfavorites = async () => {
+        const res = await getUserNFTFav<{ itemId: string }[]>();
+        const converted = res.map((nft) => nft.itemId);
+        setFavorites(new Set(converted));
+      };
+      getNFTfavorites();
+    }
   }, [favorites.size]);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ const TopSalesPage = () => {
           }),
           collection: (
             <div className='flex items-center max-w-[300px] text-xs md:text-sm'>
-              <img className='h-10 w-10 object-cover mr-4 inline-block rounded-full' src={nft.banner_image_url} />
+              <img className='h-10 w-10 object-cover mr-4 inline-block rounded-full' src={nft.banner_image_url || 'placeholder.png'} />
               {nft.name}
             </div>
           ),
@@ -103,6 +105,7 @@ const TopSalesPage = () => {
           uniquePercent: 'N/A',
           itemsListed: nft.num_listed,
           name: nft.name,
+          image: nft.banner_image_url || 'placeholder.png',
         };
       });
       setTableData(convertedData);
