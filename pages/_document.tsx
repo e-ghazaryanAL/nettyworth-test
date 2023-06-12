@@ -6,9 +6,10 @@ export default function Document() {
     <Html translate='no'>
       <Head>
         {/* Google tag (gtag.js) */}
-        <Script src='https://www.googletagmanager.com/gtag/js?id=G-3Z1XHKWC0V' />
+        <Script strategy='afterInteractive' src='https://www.googletagmanager.com/gtag/js?id=G-3Z1XHKWC0V' />
         <Script
           id='gtag'
+          strategy='afterInteractive'
           dangerouslySetInnerHTML={{
             __html: `
           window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-3Z1XHKWC0V');
@@ -18,6 +19,7 @@ export default function Document() {
         {/* Twitter conversion tracking base code */}
         <Script
           id='twitter'
+          strategy='afterInteractive'
           dangerouslySetInnerHTML={{
             __html: `!function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
   },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
@@ -28,6 +30,7 @@ export default function Document() {
         {/* End Twitter conversion tracking base code */}
         <Script
           id='tracking'
+          strategy='afterInteractive'
           dangerouslySetInnerHTML={{
             __html: ` !function (w, d, t) {
               w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
@@ -36,8 +39,22 @@ export default function Document() {
             }(window, document, 'ttq');`,
           }}
         />
-        <Script src='https://tools.luckyorange.com/core/lo.js?site-id=86bf8383'></Script>
+        <script async defer src='https://tools.luckyorange.com/core/lo.js?site-id=86bf8383'></script>
+        <Script strategy='afterInteractive' src='https://tools.luckyorange.com/core/lo.js?site-id=86bf8383'></Script>
       </Head>
+      <noscript
+        dangerouslySetInnerHTML={{
+          __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KJ47RWN"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
+        }}
+      ></noscript>
+      <noscript
+        dangerouslySetInnerHTML={{
+          __html: `
+       <img height="1" width="1" style="display:none;" alt="" src="https://px.ads.linkedin.com/collect/?pid=4512218&fmt=gif" /> 
+      `,
+        }}
+      ></noscript>
       <body>
         <Main />
         <NextScript />
