@@ -1,34 +1,28 @@
 import React, { useEffect } from 'react';
 
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import { useAccount, useConnect } from 'wagmi';
+import { useAccount } from 'wagmi';
 
-import { ETHWallet, getEthCurrency, getWalletBalance, getWalletTotalCost, getWalletUpshot } from '../../api/api';
-import { ConnectWallet } from '../../components/dashboard/portfolio/ConnectWallet';
+import { getEthCurrency, getWalletBalance, getWalletTotalCost, getWalletUpshot } from '../../api/api';
 import { DashboardSidebar } from '../../components/dashboard/portfolio/DashboardSidebar';
-import { NFTCollection } from '../../components/dashboard/portfolio/NFTCollection';
 import { LatestNews } from '../../components/dashboard/portfolio/PortfolioNews';
-import PortfolioStats from '../../components/dashboard/portfolio/PortfolioStats';
 import { useAppDispatch } from '../../hooks/redux';
 import useScreenSize from '../../hooks/useScreenSize';
-import { setShowAnimation } from '../../redux/auth/authSlice';
 import { Asset } from '../../redux/top-sales/upshotmodel';
 import { IUpshotStats } from '../../redux/wallet/model';
 import { getWalletDetail, setLoading } from '../../redux/wallet/userSlice';
 import { PrivateRoute } from '../../utils/auth';
 import { hexToETh } from '../../utils/formatter';
 
+const ConnectionProvider = dynamic(() => import('../../components/dashboard/portfolio/ConnectionProvider'), { ssr: false });
+
 const DashboardPortfolio: React.FC = () => {
-  const { connect, connectors } = useConnect();
   const { isConnected, address } = useAccount();
   const { screenWidth } = useScreenSize();
   const mobileView = screenWidth < 1280;
   const dispatch = useAppDispatch();
   const pathname = usePathname();
-  const connectWalletHandler = async (providerNum: number) => {
-    connect({ connector: connectors[providerNum] });
-    setShowAnimation(true);
-  };
 
   useEffect(() => {
     document.body.className = 'docBody';
@@ -92,18 +86,7 @@ const DashboardPortfolio: React.FC = () => {
     <div>
       <div className={`${pathname !== '/' ? 'xl:pb-[50px]' : 'xl:pb-0'} flex flex-col pb-20  xl:flex-row dark:xl:pb-0`}>
         <div className=' border-light-gray xl:w-[70%] xl:border-r xl:overflow-y-auto xl:h-screen scrollbar-hide'>
-          {isConnected ? (
-            <>
-              <PortfolioStats />
-              <NFTCollection />
-            </>
-          ) : (
-            <div className='pt-3 px-5'>
-              <h4 className='mb-3 font-semibold leading-[42px]'>Portfolio</h4>
-              <ConnectWallet connectWallet={connectWalletHandler} bgColor='bg-primary' />
-            </div>
-          )}
-
+          <ConnectionProvider />
           <div className='xl:hidden'>{mobileView && <DashboardSidebar />}</div>
           <LatestNews />
         </div>

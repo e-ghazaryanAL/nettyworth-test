@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useAccount } from 'wagmi';
 
 import HeartIcon from '../../assets/icons/icon-fav-heart.svg';
@@ -8,7 +9,6 @@ import CryptoFilter from '../../components/dashboard/crypto-prices/CryptoFilter'
 import { TableUi } from '../../components/dashboard/top-sales/TableUi';
 import { TopSalesHeading } from '../../components/dashboard/top-sales/TopSalesHeading';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import useAuthenticate from '../../hooks/useAuthenticate';
 import useFavourite from '../../hooks/useFavourites';
 import { fetchCryptoCurrency, fetchCryptoCurrencyMount } from '../../redux/crypto/cryptoSlice';
 import { setCookie } from '../../utils/cookies';
@@ -39,7 +39,7 @@ const CryptoPricePage = () => {
   const weekColumnRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(1);
   const router = useRouter();
-  const isAuth = useAuthenticate();
+  const { data: session } = useSession();
 
   const cryptoColumns = useMemo(() => {
     return [
@@ -130,11 +130,12 @@ const CryptoPricePage = () => {
   }, [page, cryptoSymbol, isConnected]);
 
   useEffect(() => {
+    console.log(111);
     dispatch(fetchCryptoCurrencyMount({ start: 1, limit: 20, convert: cryptoSymbol.symbol || 'USD' }));
   }, [cryptoSymbol.symbol, isConnected]);
 
   useEffect(() => {
-    if (isAuth) {
+    if (session?.user && cryptoData?.favourites?.length) {
       const userFavCrypto = cryptoData.favourites;
       const modified = userFavCrypto.map((fav) => fav.itemId);
       setFavorites(new Set(modified));
@@ -161,7 +162,7 @@ const CryptoPricePage = () => {
       const filteredData = cryptoData?.data?.map((crypto, idx) => {
         const supplyBarPercent = `${crypto.max_supply ? ((crypto.total_supply * 100) / crypto.max_supply).toFixed(0) : 0}%`;
         return {
-          ...(isAuth && {
+          ...(session?.user && {
             heart: (
               <button onClick={(e) => handleLikeToggle(e, { itemId: `${crypto.id}`, category: 'CryptoSales' })}>
                 <HeartIcon className='w-4 h-4' fill={`${favorites.has(`${crypto.id}`) ? '#ff066a' : '#A9B0C4'}`} />
@@ -197,7 +198,7 @@ const CryptoPricePage = () => {
       });
       setTableData(filteredData);
     }
-  }, [cryptoData?.data, isAuth, favorites]);
+  }, [cryptoData?.data, favorites]);
 
   const handleNavigate = (slug: string, symbolId: string | undefined, symbol: string | undefined) => {
     if (symbol && symbolId) {

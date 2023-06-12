@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { faAnglesUp, faArrowDown, faArrowUp, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSession } from 'next-auth/react';
 
 import SalesData from './SalesData';
 import Discord from '../../../assets/icons/icon-discord.svg';
@@ -22,7 +23,7 @@ type TopSalesDetailHeadingProps = {
 
 const TopSalesDetailHeading: React.FC<TopSalesDetailHeadingProps> = ({ setIsOpen, filterCategory }) => {
   const { Collection, singleCollectionLoading } = useAppSelector((state) => state.sales);
-  const { isAuth } = useAppSelector((state) => state.isAuth);
+  const { data: session } = useSession();
   const [openData, setIsOpenData] = useState(true);
 
   return (
@@ -59,7 +60,7 @@ const TopSalesDetailHeading: React.FC<TopSalesDetailHeadingProps> = ({ setIsOpen
                       </a>
                     </div>
                     <div className='flex gap-2'>
-                      {!isAuth ? (
+                      {!session?.user ? (
                         <button className='w-[35px] h-[35px] md:h-[45px] md:w-[45px] flex items-center justify-center  bg-light-gray rounded-md'>
                           <Heart fill='#a9b0c4' className='text-[20px] w-[16.27px] h-[16.26px]' />
                         </button>

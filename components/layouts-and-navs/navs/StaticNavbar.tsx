@@ -106,7 +106,7 @@ const StaticNavbar = () => {
             {staticNavbarLinks.map((item, idx) => {
               return (
                 <li key={idx}>
-                  <Link href={item.link} onClick={() => handleOpen(item.title)} className='text-sm font-medium'>
+                  <Link href={item.link} className='text-sm font-medium'>
                     {item.title}
                   </Link>
                 </li>

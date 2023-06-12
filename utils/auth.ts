@@ -1,10 +1,18 @@
 import { GetServerSidePropsContext } from 'next';
-import nookies from 'nookies';
+import { getServerSession } from 'next-auth';
 
-export const PublicRoute = (ctx: GetServerSidePropsContext) => {
-  const cookies = nookies.get(ctx);
+import authOptions from '../pages/api/auth/[...nextauth]';
 
-  if (cookies._token) {
+interface ISession {
+  user: {
+    accessToken: string;
+    jwt: string;
+  };
+}
+export const PublicRoute = async (ctx: GetServerSidePropsContext) => {
+  const session = await getServerSession<{}, ISession>(ctx.req, ctx.res, authOptions);
+
+  if (session?.user) {
     return {
       redirect: {
         permanent: false,
@@ -19,10 +27,10 @@ export const PublicRoute = (ctx: GetServerSidePropsContext) => {
   };
 };
 
-export const PrivateRoute = (ctx: GetServerSidePropsContext) => {
-  const cookies = nookies.get(ctx);
+export const PrivateRoute = async (ctx: GetServerSidePropsContext) => {
+  const session = await getServerSession<{}, ISession>(ctx.req, ctx.res, authOptions);
 
-  if (!cookies._token) {
+  if (!session?.user) {
     return {
       redirect: {
         permanent: false,

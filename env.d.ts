@@ -7,5 +7,7 @@ namespace NodeJS {
     NEXT_PUBLIC_GALLOP_API_KEY: string;
     NEXT_PUBLIC_ETHERSCAN_API_KEY: string;
     NEXT_PUBLIC_HYGRAPH_API_KEY: string;
+    NEXTAUTH_SECRET: string;
+    NEXTAUTH_URL: string;
   }
 }

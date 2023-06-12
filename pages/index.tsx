@@ -1,6 +1,3 @@
-import { GetServerSideProps } from 'next';
-import nookies from 'nookies';
-
 import MainPage from '../components/dashboard/home/Home';
 import OrganizationSchema from '../components/Organization';
 
@@ -79,22 +76,5 @@ function App() {
     </div>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const cookies = nookies.get(ctx);
-
-  if (cookies._token) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/portfolio',
-      },
-      props: {},
-    };
-  }
-  return {
-    props: {},
-  };
-};
 
 export default App;

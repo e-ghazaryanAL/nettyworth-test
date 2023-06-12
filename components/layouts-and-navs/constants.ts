@@ -133,7 +133,7 @@ export const sideBarLinks = [
 
 export const mobileSideBarLinks = [
   {
-    link: '',
+    link: '/portfolio',
     Icon: PortfolioIcon,
     title: 'Portfolio',
   },
@@ -203,7 +203,7 @@ interface ILinks {
 }
 export const staticNavbarLinks: ILinks[] = [
   {
-    link: '',
+    link: '/login',
     title: 'Portfolio',
   },
   {

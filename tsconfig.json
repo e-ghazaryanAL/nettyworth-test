@@ -28,7 +28,8 @@
     "**/*.tsx",
     "**/**/*.ts",
     "**/**/*.tsx",
-    "env.d.ts"
+    "env.d.ts",
+    "next-auth.d.ts"
   ],
   "exclude": [
     "node_modules"

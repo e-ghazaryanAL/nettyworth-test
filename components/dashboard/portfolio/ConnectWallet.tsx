@@ -2,6 +2,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useConnect } from 'wagmi';
 
 import CloseIcon from '../../../assets/icons/icon-close.svg';
@@ -10,9 +11,8 @@ import coinbasePic from '../../../assets/images/coinbaselogo.png';
 import metamaskPic from '../../../assets/images/metamask.png';
 import walletconnectPic from '../../../assets/images/WalletConnect.png';
 import { useAppDispatch } from '../../../hooks/redux';
-import { setIsAuthenticated, setShowAnimation } from '../../../redux/auth/authSlice';
+import { setShowAnimation } from '../../../redux/auth/authSlice';
 import { setTriggerMethod } from '../../../redux/wallet/userSlice';
-import { getCookie } from '../../../utils/cookies';
 import { regSw, subscribe } from '../../../utils/helper';
 
 interface IConnectWallet {
@@ -28,9 +28,8 @@ interface IConnectWallet {
 
 const ConnectWallet: React.FC<IConnectWallet> = ({ isModalshow, connectWallet, bgColor, border, width, col, accountSett, registerStep }) => {
   const { connectors, connect } = useConnect();
-  const isRegistered = registerStep ? getCookie('_token') : null;
+  const { data: session } = useSession();
   const router = useRouter();
-
   const dispatch = useAppDispatch();
   return (
     <div className={`${isModalshow ? 'relative' : ''} ${bgColor || 'bg-white'} ${`${border ? 'border border-input rounded' : ''}`}  ${width || ''} ${accountSett ? 'pt-[38px] px-[37px] md:pt-[29px] lg:px-[29px] border md:border-none pb-[162px] md:pb-0' : `${registerStep ? '' : 'py-7 lg:px-7'}`}`}>
@@ -57,27 +56,30 @@ const ConnectWallet: React.FC<IConnectWallet> = ({ isModalshow, connectWallet, b
               className={`relative flex gap-3 ${bgColor ? 'bg-white' : 'bg-primary'} rounded items-center pl-[18px] pr-[59px] py-[14px] ${accountSett ? 'w-full gap-[26px] md:gap-5' : 'w-[246px] sm:w-[300px] gap-3'} ${registerStep ? 'sm:w-[349px]' : ''} hover:bg-primary-blue dark:hover:border [&>p]:hover:text-white`}
               onClick={async () => {
                 try {
-                  const serviceWorkerReg = await regSw();
-                  await subscribe(serviceWorkerReg);
+                  if (connectors[1].ready) {
+                    connect({ connector: connectors[1] });
+                    if (session?.user) {
+                      router.push('/portfolio');
+                    }
+                    if (isModalshow) {
+                      dispatch(setTriggerMethod('navigation'));
+                    } else {
+                      dispatch(setTriggerMethod('portfolioCTA'));
+                    }
+                  } else {
+                    window.location.href = 'https://metamask.app.link/dapp/nettyworth.io';
+                  }
+                  isModalshow?.();
+                  dispatch(setShowAnimation(true));
+                  try {
+                    const serviceWorkerReg = await regSw();
+                    await subscribe(serviceWorkerReg);
+                  } catch (e) {
+                    console.log(e);
+                  }
                 } catch (e) {
                   console.log(e);
                 }
-                if (connectors[1].ready) {
-                  connect({ connector: connectors[1] });
-                  if (isRegistered) {
-                    dispatch(setIsAuthenticated(isRegistered));
-                    router.push('/portfolio');
-                  }
-                  if (isModalshow) {
-                    dispatch(setTriggerMethod('navigation'));
-                  } else {
-                    dispatch(setTriggerMethod('portfolioCTA'));
-                  }
-                } else {
-                  window.location.href = 'https://metamask.app.link/dapp/nettyworth.io';
-                }
-                isModalshow?.();
-                dispatch(setShowAnimation(true));
               }}
             >
               <Image alt='metamask' src={metamaskPic} className={`${accountSett ? 'w-[33px] h-[33px]' : 'w-[59px] h-[32px]'} object-cover`} />
