@@ -4,31 +4,28 @@ import { faFingerprint } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { setCookie } from 'nookies';
+import { signIn, useSession } from 'next-auth/react';
 
-import { loginUser } from '../../api/api';
 import { LoginLayout } from '../../components/layouts-and-navs/landing/LoginLayout';
-import { useAppDispatch } from '../../hooks/redux';
-import { setIsAuthenticated } from '../../redux/auth/authSlice';
 import { PublicRoute } from '../../utils/auth';
-// import { setCookie } from '../../utils/cookies';
+import { setCookie } from '../../utils/cookies';
 
 const Login = () => {
   const [values, setValues] = useState({ email: '', pwd: '' });
   const [error, setError] = useState('');
   const router = useRouter();
-  const dispatch = useAppDispatch();
-
+  const { data: session } = useSession();
   const handleAuth = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const token = await loginUser(values);
-      setCookie(null, '_token', 'value', {
-        maxAge: 30 * 24 * 60 * 60,
-        path: '/',
+      await signIn('login', {
+        ...values,
+        redirect: false,
+        callbackUrl: '/portfolio',
       });
-      // setCookie('_token', token.accessToken);
-      dispatch(setIsAuthenticated(token.accessToken));
+
+      setCookie('jwt', session?.user?.jwt as string);
+
       router.push('/portfolio');
     } catch (e) {
       setError('Incorrect username or password');

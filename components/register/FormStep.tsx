@@ -2,18 +2,15 @@ import { useState } from 'react';
 
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AxiosError } from 'axios';
+import { signIn } from 'next-auth/react';
 
 import { StepPropsType } from './model';
-import { registerUser } from '../../api/api';
 import AccountIcon from '../../assets/icons/icon-account.svg';
 import Email from '../../assets/icons/icon-email.svg';
-import Hashtag from '../../assets/icons/icon-hashtag.svg';
-import { setCookie } from '../../utils/cookies';
 import { validatePassword } from '../../utils/helper';
 
 const FormStep: React.FC<StepPropsType> = ({ nextStep }) => {
-  const [values, setValues] = useState({ userName: '', email: '', pwd: '', confirmPwd: '' });
+  const [values, setValues] = useState({ username: '', email: '', pwd: '', confirmPwd: '' });
   const [regErr, setRegErr] = useState('');
   const [validateErr, setValidateError] = useState('');
 
@@ -43,20 +40,19 @@ const FormStep: React.FC<StepPropsType> = ({ nextStep }) => {
 
     try {
       if (regErr || validateErr) return;
-      const { accessToken } = await registerUser({
-        username: values.userName,
-        email: values.email,
-        pwd: values.pwd,
+      const token = await signIn('signup', {
+        ...values,
+        redirect: false,
       });
-      setCookie('_token', accessToken);
-      setRegErr('');
-      nextStep();
-    } catch (e) {
-      if (`${(e as AxiosError).response?.status}` === '409') {
-        setRegErr(`An account with Email ${values.email} already exists.`);
+      if (token?.error) {
+        const errorMessage = token.error === 'AxiosError: Request failed with status code 409' ? `An account with Email ${values.email} already exists.` : 'Registration Failed please try again';
+        setRegErr(errorMessage);
       } else {
-        setRegErr('Registration Failed please try again');
+        setRegErr('');
+        nextStep();
       }
+    } catch (e) {
+      setRegErr('Something went wrong please try again');
     }
   };
   return (
@@ -64,7 +60,7 @@ const FormStep: React.FC<StepPropsType> = ({ nextStep }) => {
       <form onSubmit={handleRegister}>
         <div className='flex flex-col gap-[18px]'>
           <div className='relative w-full h-[50px]'>
-            <input type='text' value={values.userName} required onChange={handleChange} className='bg-primary-grey w-full h-[50px] border border-lighter-gray-300 rounded placeholder:text-sm placeholder:text-[#465272] pl-12' placeholder='Username' name='userName' />
+            <input type='text' value={values.username} required onChange={handleChange} className='bg-primary-grey w-full h-[50px] border border-lighter-gray-300 rounded placeholder:text-sm placeholder:text-[#465272] pl-12' placeholder='Username' name='username' />
             <AccountIcon className='absolute left-[15px] top-[17px] w-[20px] h-[20px] text-primary' />
           </div>
           <div className='relative w-full h-[50px]'>

@@ -4,7 +4,7 @@ import { faFingerprint } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
-// import { useTheme } from 'next-themes';
+import { signOut } from 'next-auth/react';
 import { InstantSearch } from 'react-instantsearch-dom';
 import { useAccount, useDisconnect } from 'wagmi';
 
@@ -28,10 +28,10 @@ import { useTheme } from '../../../hooks/useTheme';
 import { setShowAnimation } from '../../../redux/auth/authSlice';
 import { searchHandler } from '../../../redux/auth/portfolioSlice';
 import { setUserImage } from '../../../redux/wallet/userSlice';
+
 // import { ReactComponent as AddressIcon } from '../../../assets/icons/icon-address.svg';
 // import  SunIcon } from '../../../assets/icons/icon-logged-sun.svg';
 // import { ReactComponent as HeartIcon } from '../../../assets/icons/icon-fave.svg';
-import { removeCookie } from '../../../utils/cookies';
 import AlertsModal from '../../dashboard/alerts/AlertsModal';
 import { WalletModal } from '../../dashboard/portfolio/WalletModal';
 import { SearchHits } from '../../dashboard/search-nfts/Search';
@@ -163,12 +163,9 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      // disconnect();
-      // await unsubscribe();
-      removeCookie('jwt');
-      removeCookie('_token');
       await logoutUser();
-      // dispatch(setIsAuthenticated(false));
+      disconnect();
+      await signOut();
       router.push('/');
       return true;
     } catch (e) {

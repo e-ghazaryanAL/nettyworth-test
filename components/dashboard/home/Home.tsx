@@ -70,10 +70,10 @@ const MainPage = () => {
             </p>
             <p className='text-center font-medium text-lg leading-[26px] md:text-left md:text-[22px] md:leading-9 text-dark-blue'>Portfolio, News, Sales, and Drops in one Dashboard.</p>
             <div className='flex mt-1 flex-col md:flex-row md:gap-6 w-full items-center'>
-              <Link href='/' className='border-[3px] max-w-[221px] text-md text-dark-blue w-full hover:bg-primary-blue hover:text-white target:bg-off-blue border-primary rounded h-[49px] flex justify-center items-center'>
+              <Link href='/portfolio' className='border-[3px] max-w-[221px] text-md text-dark-blue w-full hover:bg-primary-blue hover:text-white target:bg-off-blue border-primary rounded h-[49px] flex justify-center items-center'>
                 View Your NFT Portfolio
               </Link>
-              <Link href='/' className='bg-primary-blue my-3 text-md text-white w-full hover:bg-dark-blue hover:text-white target:bg-off-blue max-w-[221px] md:max-w-[200px] rounded h-[49px] hidden md:flex justify-center items-center'>
+              <Link href='/portfolio' className='bg-primary-blue my-3 text-md text-white w-full hover:bg-dark-blue hover:text-white target:bg-off-blue max-w-[221px] md:max-w-[200px] rounded h-[49px] hidden md:flex justify-center items-center'>
                 Connect Wallet
               </Link>
             </div>

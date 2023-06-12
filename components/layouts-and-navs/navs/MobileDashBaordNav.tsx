@@ -4,6 +4,7 @@ import { faFingerprint, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { useAccount } from 'wagmi';
 
 // import { ReactComponent as AlertIcon } from '../../../assets/icons/icon-alerts.svg';
@@ -45,7 +46,8 @@ const MobileTopNav: React.FC<IMobileTopNav> = ({ handleLogout, walletModalHandle
   const { connector } = useAccount();
   const dispatch = useAppDispatch();
   const { isOpen } = useAppSelector((state) => state.isOpen);
-  const { isAuth } = useAppSelector((state) => state.isAuth);
+  const { data: session } = useSession();
+
   const { userImage } = useAppSelector((state) => state.user);
   const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const { isVisible } = useAppSelector((state) => state.isVisible);
@@ -121,7 +123,7 @@ const MobileTopNav: React.FC<IMobileTopNav> = ({ handleLogout, walletModalHandle
             </div>
             <div className='relative mt-[22px] z-20'>
               <div className='bg-dark-blue w-11 h-16 flex flex-col gap-2 justify-center items-center rounded' onClick={() => setPageLogOut((prev) => !prev)}>
-                <img src={`${userImage || '/profile.png'}`} className={`${isOpen && !isAuth ? 'hidden' : 'block'} w-7 h-7 rounded-full object-cover logged`} alt='' />
+                <img src={`${userImage || '/profile.png'}`} className={`${isOpen && !session?.user ? 'hidden' : 'block'} w-7 h-7 rounded-full object-cover logged`} alt='' />
                 <FontAwesomeIcon icon={faAngleDown} className='text-white w-3' />
               </div>
               {pageLogout && (

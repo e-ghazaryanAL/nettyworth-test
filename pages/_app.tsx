@@ -9,6 +9,7 @@ import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import { Poppins } from 'next/font/google';
 import Head from 'next/head';
+import { SessionProvider } from 'next-auth/react';
 import '../index.css';
 import '../styles/globals.css';
 import '../styles/theme.scss';
@@ -58,23 +59,25 @@ type AppPropsWithLayout = AppProps & {
 
 function MyApp({ Component, ...rest }: AppPropsWithLayout) {
   const { store, props } = wrapper.useWrappedStore(rest);
-  const { pageProps } = props;
+  const { pageProps, session } = props;
+
   const getLayout = Component.getLayout || ((page: ReactElement) => <GeneralLayout>{page}</GeneralLayout>);
+
   return (
     <div>
       <Head>
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <meta name='theme-color' content='#000000' />
       </Head>
-      <Provider store={store}>
-        <div className={poppins.className}>
-          <WagmiConfig config={client}>{getLayout(<Component {...pageProps} />)}</WagmiConfig>
-        </div>
-      </Provider>
+      <SessionProvider session={session}>
+        <Provider store={store}>
+          <div className={poppins.className}>
+            <WagmiConfig config={client}>{getLayout(<Component {...pageProps} />)}</WagmiConfig>
+          </div>
+        </Provider>
+      </SessionProvider>
     </div>
   );
 }
-
-MyApp.getInitialProps = wrapper.getInitialPageProps(() => () => {});
 
 export default MyApp;

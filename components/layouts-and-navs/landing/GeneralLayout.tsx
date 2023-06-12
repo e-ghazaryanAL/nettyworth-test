@@ -1,16 +1,14 @@
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import ReactConfetti from 'react-confetti';
 import { useAccount } from 'wagmi';
 
+import DashboardLayout from './DasboardLayout';
 import Home from './Home';
 import { useAppSelector } from '../../../hooks/redux';
-import useScreenSize from '../../../hooks/useScreenSize';
 import { useTheme } from '../../../hooks/useTheme';
-
-import dynamic from 'next/dynamic';
 import SEO from '../../SEO';
 
-const DashboardLayout = dynamic(() => import('./DasboardLayout'), { ssr: false });
 interface IMetadata {
   title: string;
   description: string;
@@ -45,17 +43,17 @@ const metaData: MetadataProps = {
 };
 
 const GeneralLayout = ({ children }: { children: React.ReactNode }) => {
-  const { isAuth, showAnimation } = useAppSelector((state) => state.isAuth);
+  const { showAnimation } = useAppSelector((state) => state.isAuth);
+  const { data: session } = useSession();
   const { mode } = useTheme();
   const router = useRouter();
   const { isConnected } = useAccount();
-  const { screenWidth, screenHeight } = useScreenSize();
 
   return (
     <div className={`${mode}`}>
-      {showAnimation && isConnected && <ReactConfetti width={screenWidth} tweenDuration={2000} friction={0.97} height={screenHeight} recycle={false} />}
+      {showAnimation && isConnected && <ReactConfetti width={1920} tweenDuration={2000} friction={0.97} height={1080} recycle={false} />}
       {metaData[router.pathname] && <SEO image={metaData[router.pathname]?.image} title={metaData[router.pathname]?.title} description={metaData[router.pathname]?.description} />}
-      <div>{isAuth ? <DashboardLayout>{children}</DashboardLayout> : <Home>{children}</Home>}</div>
+      <div>{session?.user ? <DashboardLayout>{children}</DashboardLayout> : <Home>{children}</Home>}</div>
     </div>
   );
 };

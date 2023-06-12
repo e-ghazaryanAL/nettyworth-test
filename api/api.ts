@@ -2,6 +2,7 @@ import algoliasearch from 'algoliasearch';
 import axios, { AxiosRequestConfig } from 'axios';
 import { ethers } from 'ethers';
 import { GraphQLClient } from 'graphql-request';
+import { getSession } from 'next-auth/react';
 
 import { AlertCategory } from '../redux/alerts/model';
 import { CryptoCurrencyParams, CryptoCurrencyStatParams } from '../redux/crypto/model';
@@ -9,7 +10,7 @@ import { INftFloorPrice, IRarityTokens, IWalletNFTPnL } from '../redux/my-nfts/m
 import { FetchCryptoNewsParams, FetchNewsParams, INettyNews } from '../redux/news/model';
 import { CollectionsAssetsParams, ITokensByColl, ITopSalesDataParams, TopSalesDetailNftsParams } from '../redux/top-sales/model';
 import { IEthCurrency, ISaveWallet, IUserDetails, IWalletValueParams } from '../redux/wallet/model';
-import { clearCookies, getCookie, setCookie } from '../utils/cookies';
+import { clearCookies, getCookie } from '../utils/cookies';
 import { buildParams } from '../utils/formatter';
 
 const BASE_URL = 'https://app-api-1.nettyart.io';
@@ -50,12 +51,12 @@ const getRequest = async (url: string, config?: AxiosRequestConfig, isOpenseaUrl
   if (isOpenseaUrl) {
     requestConfig.headers = { accept: 'application/json', 'X-API-KEY': 'c1051ef9ad3643a0abaeb5f2a7126352' };
   } else {
-    const token = getCookie('_token');
+    const token = await getSession();
 
-    if (token) {
+    if (token?.user?.accessToken) {
       requestConfig.headers = {
         ...requestConfig?.headers,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token?.user?.accessToken}`,
         // withCredentials: true
       };
     }
@@ -64,7 +65,15 @@ const getRequest = async (url: string, config?: AxiosRequestConfig, isOpenseaUrl
   return result.data;
 };
 
-export const postRequest = async (url: string, body?: object, config?: AxiosRequestConfig, isOpenseaUrl = false, isNettyWorth = false) => {
+export const postRequest = async (
+  url: string,
+  body?: object,
+  config?: AxiosRequestConfig & {
+    sendResult?: boolean;
+  },
+  isOpenseaUrl = false,
+  isNettyWorth = false
+) => {
   const requestConfig = { ...config };
   let requestUrl;
 
@@ -76,27 +85,27 @@ export const postRequest = async (url: string, body?: object, config?: AxiosRequ
     requestUrl = BASE_URL + url;
   }
 
-  const token = getCookie('_token');
-  if (token) {
+  const session = await getSession();
+  if (session?.user) {
     requestConfig.headers = {
       ...requestConfig?.headers,
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${session?.user.accessToken}`,
     };
   }
 
   const result = await axios.post(requestUrl, body, requestConfig);
+  if (config?.sendResult) return result;
   return result.data;
 };
 
 const putRequest = async (url: string, body?: Record<string, any>, config?: AxiosRequestConfig, withAuth = true) => {
-  const token = getCookie('_token');
-
+  const session = await getSession();
   if (withAuth) {
     config = {
       ...config,
       headers: {
         ...config?.headers,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
       // withCredentials: true,
     };
@@ -175,8 +184,12 @@ export const saveWallet = async (walletData: ISaveWallet) => {
 };
 
 export const getCryptoCurrency = async (params: CryptoCurrencyParams) => {
-  const res = await getRequest('/crypto/prices?convert=USD', { params }, false, true);
-  return res;
+  try {
+    const res = await getRequest('/crypto/prices?convert=USD', { params }, false, true);
+    return res;
+  } catch (e) {
+    return e;
+  }
 };
 export const getNotifications = async () => {
   const res = await getRequest('/notifications', {}, false, true);
@@ -208,7 +221,7 @@ export const updateUserDetail = async (body: Pick<IUserDetails, 'email' | 'name'
 };
 
 export const loginUser = async (credentials: { email: string; pwd: string }) => {
-  const res = await postRequest('/auth', credentials, { withCredentials: true }, false, true);
+  const res = await postRequest('/auth', credentials, { withCredentials: true, sendResult: true }, false, true);
   return res;
 };
 
@@ -272,41 +285,6 @@ export const refreshToken = async () => {
     withCredentials: true,
   });
 };
-
-const axiosInstance = axios.create();
-
-axios.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    const originalRequest = error.config;
-
-    if (error) {
-      if (originalRequest.url === `${NETTY_URL}/refresh`) {
-        // await logoutUser();
-        // removeCookie('_token');
-        // window.location.reload();
-        return Promise.reject(error);
-      }
-      if (error.response.status === 403 || error.response.data === 'jwt expired') {
-        const {
-          data: { accessToken },
-        }: any = await refreshToken();
-
-        setCookie('_token', accessToken);
-
-        return axiosInstance({
-          ...originalRequest,
-          headers: { ...originalRequest.headers, Authorization: `Bearer ${accessToken}` },
-          sent: true,
-        });
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
 
 export const getCryptoDetails = async (params: { id: string }) => {
   const res = await axios.get(`${NETTY_URL}/crypto/quote`, { params });

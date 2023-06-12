@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { getUserNFTFav } from '../../api/api';
 
+import { useSession } from 'next-auth/react';
+
+import { getUserNFTFav } from '../../api/api';
 import Heart from '../../assets/icons/icon-fav-heart.svg';
 import { Paginataion } from '../../components/dashboard/news/Pagination';
 import { FilteredButtons } from '../../components/dashboard/top-sales/FilteredButtons';
@@ -9,7 +11,6 @@ import { TopSalesHeading } from '../../components/dashboard/top-sales/TopSalesHe
 import { TopSalesTable } from '../../components/dashboard/top-sales/TopSalesTable';
 import { Loader } from '../../components/Loader';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import useAuthenticate from '../../hooks/useAuthenticate';
 import useFavourite from '../../hooks/useFavourites';
 import usePaginate from '../../hooks/usePaginate';
 import { fetchCollectionsByPage } from '../../redux/top-sales/topSalesSlice';
@@ -30,7 +31,7 @@ const TopSalesPage = () => {
   const [view, setView] = useState<string>('list');
   const { favorites, handleLikeToggle, setFavorites } = useFavourite();
   const [tableData, setTableData] = useState<any[] | []>([]);
-  const iAuth = useAuthenticate();
+  const { data: session } = useSession();
   const limit = 20;
   const totalPages = 100;
 
@@ -62,7 +63,7 @@ const TopSalesPage = () => {
   }, [pageNumber]);
 
   useEffect(() => {
-    if (iAuth) {
+    if (session?.user) {
       const getNFTfavorites = async () => {
         const res = await getUserNFTFav<{ itemId: string }[]>();
         const converted = res.map((nft) => nft.itemId);
@@ -78,7 +79,7 @@ const TopSalesPage = () => {
         return {
           change: nft.volume.change[`wei_${selectedDate}` as keyof typeof nft.volume.change],
           volume: Math.round(hexToETh(nft.volume[`wei_${selectedDate}` as keyof typeof nft.volume])),
-          ...(iAuth && {
+          ...(session?.user && {
             heart: (
               <button onClick={(e) => handleLikeToggle(e, { category: 'NFTSales', itemId: nft.contract_address })}>
                 <Heart fill={`${favorites.has(nft.contract_address) ? '#ff066a' : '#A9B0C4'}`} className='w-4 h-4' />
