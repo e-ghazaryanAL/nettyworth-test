@@ -1,6 +1,3 @@
-import { useEffect } from 'react';
-
-import { useRouter } from 'next/router';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Dropdown from 'rc-dropdown';
@@ -8,8 +5,7 @@ import 'rc-dropdown/assets/index.css';
 import Menu, { Item as MenuItem } from 'rc-menu';
 
 import Search from '../../../assets/icons/icon-search.svg';
-import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
-import { fetchCollectionTraitTypes } from '../../../redux/top-sales/topSalesSlice';
+import { useAppSelector } from '../../../hooks/redux';
 import { TraitType } from '../../../redux/top-sales/upshotmodel';
 import { Loader } from '../../Loader';
 
@@ -91,17 +87,7 @@ const priceOptions = [
 
 const TopSalesDetailFilter: React.FC<TopSalesDetailFilterProps> = ({ filter, clearFilter, search, searchvalue }) => {
   const { CollectionTraits } = useAppSelector((state) => state.sales);
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { slug } = router.query;
 
-  useEffect(() => {
-    dispatch(
-      fetchCollectionTraitTypes({
-        slug: slug as string,
-      })
-    );
-  }, []);
   const handleFilter = (trait_type: string) => {};
   return (
     <div className='hr pt-7'>

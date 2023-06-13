@@ -17,7 +17,7 @@ export const fetchCollectionsByPage = createAsyncThunk<ITopSalesData, ITopSalesD
 
 export const fetchCollection = createAsyncThunk('sales/fetchCollection', async (slug: string, { rejectWithValue }) => {
   try {
-    const response = await getTopSalesCollection<any>({ slug });
+    const response = await getTopSalesDetail({ slug }, '');
     return response;
   } catch (e) {
     return rejectWithValue(e);
