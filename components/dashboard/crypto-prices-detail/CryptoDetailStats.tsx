@@ -9,8 +9,8 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { fetchCryptoStats } from '../../../redux/crypto/cryptoSlice';
 import { Quote, StatsInterval } from '../../../redux/crypto/model';
 import { getCookie } from '../../../utils/cookies';
-import { Loader } from '../../Loader';
 import { USDDollarFormatter } from '../../../utils/formatter';
+import { Loader } from '../../Loader';
 
 const CryptoDetailStats = () => {
   const {

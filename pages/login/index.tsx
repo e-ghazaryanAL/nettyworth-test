@@ -4,7 +4,7 @@ import { faFingerprint } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signIn, useSession } from 'next-auth/react';
+import { getSession, signIn, useSession } from 'next-auth/react';
 
 import { LoginLayout } from '../../components/layouts-and-navs/landing/LoginLayout';
 import { PublicRoute } from '../../utils/auth';
@@ -14,7 +14,7 @@ const Login = () => {
   const [values, setValues] = useState({ email: '', pwd: '' });
   const [error, setError] = useState('');
   const router = useRouter();
-  const { data: session } = useSession();
+
   const handleAuth = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -23,6 +23,7 @@ const Login = () => {
         redirect: false,
         callbackUrl: '/portfolio',
       });
+      const session = await getSession();
 
       setCookie('jwt', session?.user?.jwt as string);
 

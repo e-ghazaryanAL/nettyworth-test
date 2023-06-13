@@ -6,7 +6,7 @@ import Dropdown from 'rc-dropdown';
 import { useAccount } from 'wagmi';
 
 import 'rc-dropdown/assets/index.css';
-import { ETHWallet, getMultipleAssets, getTopSalesCollection, getWalletUpshot } from '../../../api/api';
+import { getMultipleAssets, getTopSalesCollection, getWalletUpshot } from '../../../api/api';
 import IconDetection from '../../../assets/icons/icon-detection.svg';
 import CopyIcon from '../../../assets/icons/icon-duplicate.svg';
 import SearchIcon from '../../../assets/icons/icon-search.svg';

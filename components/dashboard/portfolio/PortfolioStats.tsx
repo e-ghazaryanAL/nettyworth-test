@@ -54,11 +54,10 @@ const PortfolioStats: React.FC = () => {
   const {
     wallets: [walletData],
   } = useAppSelector((state) => state.user);
-  const { address: account } = useAccount();
-  const { copied, copyHandler, copyRef } = useCopy(account);
+  const { address } = useAccount();
+  const { copied, copyHandler, copyRef } = useCopy(address);
   const [walletValuation, setWalletValuation] = useState<TWalletValuation[] | []>([]);
   const [loading, setLoading] = useState(false);
-  const { address } = useAccount();
   const [selectedInterval, setSelectedInterval] = useState('ALL');
 
   const sortedValuation = walletValuation.sort((a, b) => new Date(a.valuation_date).getTime() - new Date(b.valuation_date).getTime());
@@ -90,18 +89,41 @@ const PortfolioStats: React.FC = () => {
   useEffect(() => {
     if (address) {
       setLoading(true);
-      const getwalletValueation = async () => {
-        const res = await getNFTValue({
-          wallet_address: address,
-          historical: true,
-          include_hist_nfts: false,
-        });
-        if (Array.isArray(res)) {
-          setWalletValuation(res);
+      const saveData = <T,>(newData: T) => {
+        const currentTime = new Date().getTime();
+        const dataToSave = {
+          data: newData,
+          timestamp: currentTime,
+        };
+
+        localStorage.setItem('myData', JSON.stringify(dataToSave));
+      };
+      const storageData = localStorage.getItem('myData') ?? '{}';
+      const cachedData = JSON.parse(storageData);
+      if (cachedData?.data) {
+        const currentTime = new Date().getTime();
+        const isDataValid = currentTime - cachedData.timestamp < 30 * 60 * 1000;
+        if (isDataValid) {
+          setWalletValuation(cachedData.data);
+        } else {
+          localStorage.removeItem('myData');
         }
         setLoading((prev) => !prev);
-      };
-      getwalletValueation();
+      } else {
+        const getwalletValueation = async () => {
+          const res = await getNFTValue({
+            wallet_address: address,
+            historical: true,
+            include_hist_nfts: false,
+          });
+          if (Array.isArray(res)) {
+            saveData(res);
+            setWalletValuation(res);
+          }
+          setLoading((prev) => !prev);
+        };
+        getwalletValueation();
+      }
     }
   }, [address]);
 
@@ -121,10 +143,10 @@ const PortfolioStats: React.FC = () => {
                 Copied!
               </span>
             </div>
-            <p className='p-small text-primary md:p-large dark-primary' title={account}>
-              {truncateAddress(account)}
+            <p className='p-small text-primary md:p-large dark-primary' title={address}>
+              {truncateAddress(address)}
             </p>
-            <button title={account} className='dark-primary text-primary'>
+            <button title={address} className='dark-primary text-primary'>
               <FontAwesomeIcon icon={faCopy} onClick={copyHandler} />
             </button>
           </div>

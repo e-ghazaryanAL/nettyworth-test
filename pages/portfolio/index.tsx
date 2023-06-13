@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
+import { parseCookies, setCookie } from 'nookies';
 import { useAccount } from 'wagmi';
 
 import { getEthCurrency, getWalletBalance, getWalletTotalCost, getWalletUpshot } from '../../api/api';
@@ -29,33 +30,44 @@ const DashboardPortfolio: React.FC = () => {
 
     const fetchWalletsDetail = async () => {
       dispatch(setLoading(true));
+      const walletOwnedAssets = await getWalletUpshot<{ assets: Asset[] }>(
+        {
+          walletAddress: address ?? '',
+          limit: 12,
+          sort_direction: 'DESC',
+          sort_order: 'appraisal_wei',
+        },
+        'assets/owned'
+      );
       if (address) {
-        const walletEthBalance = await getWalletBalance(address);
-        const EthPrice = await getEthCurrency();
-        const convertedEthBalance = hexToETh(walletEthBalance);
-        const ethUsdValue = EthPrice?.ethusd ? convertedEthBalance * Number(EthPrice?.ethusd) : 0;
-        const walletNFTPnL = await getWalletTotalCost(address, 'usd', true);
-        const walletOwnedAssets = await getWalletUpshot<{ assets: Asset[] }>(
-          {
-            walletAddress: address,
-            limit: 12,
-            sort_direction: 'DESC',
-            sort_order: 'appraisal_wei',
-          },
-          'assets/owned'
-        );
+        const cachedData = parseCookies();
 
-        const walletCollectionCount = await getWalletUpshot<IUpshotStats>(
-          {
-            walletAddress: address,
-          },
-          'stats'
-        );
-        const NFTValue = walletCollectionCount?.portfolio_value_wei ? hexToETh(walletCollectionCount.portfolio_value_wei) * Number(EthPrice.ethusd) : 0;
-        const nettyWorth = NFTValue + ethUsdValue;
-        const totalProfit = NFTValue - walletNFTPnL.tokens_held_cost_basis;
-        dispatch(
-          getWalletDetail({
+        if (cachedData?.portfolio) {
+          const portfolioData = JSON.parse(cachedData.portfolio);
+          dispatch(
+            getWalletDetail({
+              ownedAssets: walletOwnedAssets?.assets,
+              ...portfolioData,
+            })
+          );
+        } else {
+          const walletEthBalance = await getWalletBalance(address);
+
+          const EthPrice = await getEthCurrency();
+          const convertedEthBalance = hexToETh(walletEthBalance);
+          const ethUsdValue = EthPrice?.ethusd ? convertedEthBalance * Number(EthPrice?.ethusd) : 0;
+          const walletNFTPnL = await getWalletTotalCost(address, 'usd', true);
+
+          const walletCollectionCount = await getWalletUpshot<IUpshotStats>(
+            {
+              walletAddress: address,
+            },
+            'stats'
+          );
+          const NFTValue = walletCollectionCount?.portfolio_value_wei ? hexToETh(walletCollectionCount.portfolio_value_wei) * Number(EthPrice.ethusd) : 0;
+          const nettyWorth = NFTValue + ethUsdValue;
+          const totalProfit = NFTValue - walletNFTPnL.tokens_held_cost_basis;
+          const portfolioData = {
             address,
             ethbalance: convertedEthBalance,
             ethUsdValue,
@@ -67,8 +79,13 @@ const DashboardPortfolio: React.FC = () => {
             nettyWorth,
             NFTValue,
             totalProfit,
-          })
-        );
+          };
+          const { ownedAssets, ...restData } = portfolioData;
+          const expirationDate = new Date();
+          expirationDate.setTime(expirationDate.getTime() + 30 * 60 * 1000);
+          setCookie({}, 'portfolio', JSON.stringify(restData), { expires: expirationDate });
+          dispatch(getWalletDetail(portfolioData));
+        }
       }
 
       dispatch(setLoading(false));
