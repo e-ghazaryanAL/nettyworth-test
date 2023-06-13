@@ -31,7 +31,7 @@ const Podcasts = () => {
                 <div key={idx} className={`flex flex-col  sm:flex-row gap-5  pb-8 2xl:pl-8 ${idx !== 0 && 'pt-[15px] bg-light-blue-grey border-t-[1px] '} xl:max-w-[700px] 2xl:max-w-none`}>
                   <img src={item.featured_image_src} alt='' className='w-full rounded object-cover sm:max-w-[279px]' />
                   <div className='flex flex-col gap-2  xl:max-w-[468px] 2xl:max-w-[478px]'>
-                    <h2 className='font-medium text-2xl text-dark-blue'>{item.title.rendered}</h2>
+                    <h2 className='font-medium text-2xl text-dark-blue' dangerouslySetInnerHTML={{ __html: item.title.rendered }} />
                     <div className='flex flex-col gap-3'>
                       <span className='text-primary'>{newsCategory}</span>
                       <div className='flex flex-col'>
