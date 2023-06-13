@@ -45,7 +45,6 @@ const DashboardSidebar = () => {
   const { NftTopSalesCollections } = useAppSelector((state) => state.sales);
   const [userCrypto, setUserCrypto] = useState<UserCryptoFavourite[]>([]);
   const [isFavNFT, setIsFavNFT] = useState(false);
-
   const dispatch = useAppDispatch();
   const [accordion, setAccordion] = useState<Set<string>>(new Set());
   useEffect(() => {
@@ -150,11 +149,11 @@ const DashboardSidebar = () => {
         </PortfolioCard>
       </div>
       <div className='mt-4'>
-        <PortfolioCard handleClick={handleClick} accordion={accordion} title={{ black: 'Crypto', blue: 'Value' }} icon={accordion.has('Crypto') && isConnected ? faAnglesUp : faAnglesDown}>
-          <div className='flex justify-between mt-4 px-3'>
+        <PortfolioCard handleClick={handleClick} price={user?.ethUsdValue} accordion={accordion} title={{ black: 'Crypto', blue: 'Value' }} icon={accordion.has('Crypto') && isConnected ? faAnglesUp : faAnglesDown}>
+          {/* <div className='flex justify-between mt-4 px-3'>
             <p className='font-medium'>Total Value</p>
             <p className='font-medium dark-values'>{user?.ethUsdValue ? USDDollarFormatter(user?.ethUsdValue) : '$0.00'}</p>
-          </div>
+          </div> */}
           {/* <div className='mt-3 px-3 pt-3 border-t-[1px] border-light-gray flex justify-between'>
             <p className='p-small font-medium'>Total Profit</p>
             <p className='p-small text-light-green'>+X,XXX.xx</p>
@@ -193,7 +192,7 @@ const DashboardSidebar = () => {
           </div>
         </div>
         <div className='mt-4'>
-          <PortfolioCard title={{ black: `${userCrypto?.length ? 'Favorite' : 'Crypto'}`, blue: `${userCrypto?.length ? 'Crypto' : 'Currency'}` }} button={<p className='font-medium'>Price</p>}>
+          <PortfolioCard title={{ black: 'Favorite', blue: 'Crypto' }} button={<p className='font-medium'>Price</p>}>
             {userCrypto?.map((crypto: any, idx) => {
               return (
                 <div key={idx} className='border-b-[1px] last:border-b-0'>

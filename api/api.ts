@@ -359,7 +359,7 @@ export const getCryptoStats = async (params: CryptoCurrencyStatParams) => {
 const getfromUpshot = async (url: string, params: Record<string, any>) => {
   const res = await fetch(`${UPSHOT_URL}${url}?${new URLSearchParams(params).toString()}`, {
     method: 'GET',
-    headers: { accept: 'application/json', 'x-api-key': 'UP-b983fbddb7a043259d38d929' },
+    headers: { accept: 'application/json', 'x-api-key': 'UP-9b68df7f5cc149858baed68e' },
   });
   const nftData = await res.json();
   return nftData.data;
