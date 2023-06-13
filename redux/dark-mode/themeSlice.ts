@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { Theme } from './model';
+import { getCookie } from '../../utils/cookies';
 
 const initialState: Theme = {
-  mode: 'light',
+  mode: getCookie('theme'),
 };
 
 const themeSlice = createSlice({

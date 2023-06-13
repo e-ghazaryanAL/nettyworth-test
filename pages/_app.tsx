@@ -80,4 +80,6 @@ function MyApp({ Component, ...rest }: AppPropsWithLayout) {
   );
 }
 
+MyApp.getInitialProps = wrapper.getInitialPageProps(() => () => {});
+
 export default MyApp;
