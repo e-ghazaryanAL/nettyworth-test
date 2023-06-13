@@ -41,7 +41,10 @@ const AboutPage = () => {
             <span className='text-[27px] text-dark-blue font-bold lg:text-[40px]'>About </span>
             <span className='text-[27px] text-primary font-bold lg:text-[40px]'>NettyWorth</span>
           </div>
-          <span className='text-sm md:text-[15px] text-dark-blue font-medium  leading-[28px] md:leading-[28px] xl:text-[22px] lg:leading-9'>NettyWorth is a Web3 fintech that enables users to research, manage and borrow against their digital assets. Our mission is to improve the financial literacy of millions of people around the world and provide users with the best Web3 Platform.</span>
+          <span className='text-sm md:text-[15px] text-dark-blue font-medium  leading-[28px] md:leading-[28px] xl:text-[22px] lg:leading-9'>
+            "At Nettyworth, our mission to transform how millions of users manage their digital assets. We are developing solutions that will help individuals take control of their financial future. By exploring new possibilities, and delivering an incredible user experience, we aim to redefine how digital assets are managed on the blockchain and make financial solutions accessible to everyone."
+            July Grullon, Nettyworth Co-Founder & CEO
+          </span>
         </div>
       </div>
       <div className='bg-light-gray'>

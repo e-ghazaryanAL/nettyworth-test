@@ -75,7 +75,7 @@ const NewsDetail = ({ categoryId, detail }: INewsDetail) => {
             </div>
             <div className='pt-6 h-[28rem] sm:h-auto bg-white'>
               <div className='px-8 2xl:px-0'>
-                <h1 className='text-[40px] text-primary font-bold pt max-w-[1300px] 2xl:mx-auto'>{detail?.title.rendered}</h1>
+                <h1 className='text-[40px] text-primary font-bold pt max-w-[1300px] 2xl:mx-auto' dangerouslySetInnerHTML={{ __html: detail?.title.rendered }} />
                 <div className='flex pt-3 justify-between max-w-[1168px] 2xl:mx-auto'>
                   <span className='text-sm'>{moment(detail?.date).format('MMMM D YYYY')}</span>
                   <span className='text-sm '>By {detail?.author_info.display_name}</span>

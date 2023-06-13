@@ -52,7 +52,7 @@ const NewsList: React.FC<NewsListProps> = ({ categoryId, handleNavigate }) => {
                     <Image src={item.featured_image_src} alt='news-image' width={279} height={186} className='w-full rounded' />
                   </div>
                   <div className='flex flex-col gap-2 cursor-pointer  xl:max-w-[468px] 2xl:max-w-[478px]' onClick={() => handleNavigate(item.slug)}>
-                    <h2 className='font-medium text-2xl text-dark-blue'>{item.title.rendered}</h2>
+                    <h2 className='font-medium text-2xl text-dark-blue' dangerouslySetInnerHTML={{ __html: item.title.rendered }} />
                     <div className='flex flex-col gap-3'>
                       <span className='text-primary'>{newsCategory}</span>
                       <div className='hidden sm:flex flex-col'>
