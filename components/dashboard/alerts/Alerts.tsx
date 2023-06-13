@@ -105,11 +105,11 @@ const Alerts = () => {
               <span className='text-sm text-[#465272]'>NFT News</span>
             </div>
             <div className='flex items-center gap-3'>
-              <label className='inline-flex relative items-center mr-5 cursor-pointer'>
+              <label className='inline-flex relative items-center mr-5 cursor-pointer rounded-full'>
                 <input type='checkbox' className='sr-only peer' checked={toggleSwitch.News} readOnly />
                 <div
                   onClick={() => handleSwitchToggle('News')}
-                  className="w-[43.5px] h-[21px] bg-[#BFC8DF] rounded-full peer  peer-focus:ring-[#006FFF]  peer-checked:after:-translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[0.2rem] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[15px] after:w-[15px] after:transition-all peer-checked:bg-[#006FFF]"
+                  className="w-11 h-[21px] bg-[#BFC8DF] rounded-full peer peer-focus:ring-[#006FFF] peer-checked:after:-translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[0.2rem] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[15px] after:w-[15px] after:transition-all peer-checked:bg-[#006FFF] dark:peer dark:!bg-dark-mode-btn dark:peer-checked:!bg-[#006FFF]"
                 ></div>
               </label>
             </div>
@@ -120,11 +120,11 @@ const Alerts = () => {
               <span className='text-sm text-[#465272]'>Upcoming NFTS</span>
             </div>
             <div className='flex items-center gap-3'>
-              <label className='inline-flex relative items-center mr-5 cursor-pointer'>
+              <label className='inline-flex relative items-center mr-5 cursor-pointer rounded-full'>
                 <input type='checkbox' className='sr-only peer' checked={toggleSwitch.Upcoming} readOnly />
                 <div
                   onClick={() => handleSwitchToggle('Upcoming')}
-                  className="w-11 h-[21px] bg-[#BFC8DF] rounded-full peer  peer-focus:ring-[#006FFF]  peer-checked:after:-translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[0.2rem] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[15px] after:w-[15px] after:transition-all peer-checked:bg-[#006FFF]"
+                  className="w-11 h-[21px] bg-[#BFC8DF] rounded-full peer peer-focus:ring-[#006FFF] peer-checked:after:-translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[0.2rem] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[15px] after:w-[15px] after:transition-all peer-checked:bg-[#006FFF] dark:peer dark:bg-dark-mode-btn dark:peer-checked:!bg-[#006FFF]"
                 ></div>
               </label>
             </div>
@@ -134,11 +134,11 @@ const Alerts = () => {
               <span className='text-sm text-[#465272]'>Crypto Prices</span>
             </div>
             <div className='flex items-center gap-3'>
-              <label className='inline-flex relative items-center mr-5 cursor-pointer'>
+              <label className='inline-flex relative items-center mr-5 cursor-pointer rounded-full'>
                 <input type='checkbox' className='sr-only peer' checked={toggleSwitch.CryptoSales} readOnly />
                 <div
                   onClick={() => handleSwitchToggle('CryptoSales')}
-                  className="w-11 h-[21px] bg-[#BFC8DF] rounded-full peer  peer-focus:ring-[#006FFF]  peer-checked:after:-translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[0.2rem] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[15px] after:w-[15px] after:transition-all peer-checked:bg-[#006FFF]"
+                  className="w-11 h-[21px] bg-[#BFC8DF] rounded-full peer peer-focus:ring-[#006FFF] peer-checked:after:-translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[0.2rem] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[15px] after:w-[15px] after:transition-all peer-checked:bg-[#006FFF] dark:peer dark:!bg-dark-mode-btn dark:peer-checked:!bg-[#006FFF]"
                 ></div>
               </label>
             </div>
@@ -148,11 +148,11 @@ const Alerts = () => {
               <span className='text-sm text-[#465272]'>NFT Sales</span>
             </div>
             <div className='flex items-center gap-3'>
-              <label className='inline-flex relative items-center mr-5 cursor-pointer'>
+              <label className='inline-flex relative items-center mr-5 cursor-pointer rounded-full'>
                 <input type='checkbox' className='sr-only peer' checked={toggleSwitch.NFTSales} readOnly />
                 <div
                   onClick={() => handleSwitchToggle('NFTSales')}
-                  className="w-11 h-[21px] bg-[#BFC8DF] rounded-full peer  peer-focus:ring-[#006FFF]  peer-checked:after:-translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[0.2rem] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[15px] after:w-[15px] after:transition-all peer-checked:bg-[#006FFF]"
+                  className="w-11 h-[21px] bg-[#BFC8DF] rounded-full peer peer-focus:ring-[#006FFF] peer-checked:after:-translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[0.2rem] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[15px] after:w-[15px] after:transition-all peer-checked:bg-[#006FFF] dark:peer dark:!bg-dark-mode-btn dark:peer-checked:!bg-[#006FFF]"
                 ></div>
               </label>
             </div>
