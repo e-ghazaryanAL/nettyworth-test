@@ -9,7 +9,7 @@ const HitArticleContent = ({ hit }: any) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const handleNavigate = () => {
-    router.push(`nft-news/${hit.slug}`);
+    router.push(`/nft-education/${hit.slug}`);
     dispatch(searchHandler());
   };
 

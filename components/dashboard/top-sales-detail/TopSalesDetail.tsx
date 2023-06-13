@@ -10,8 +10,7 @@ import { TopSalesDetailFilter } from './TopSalesDetailFilter';
 import { TopSalesDetailHeading } from './TopSalesDetailHeading';
 import { useAppDispatch } from '../../../hooks/redux';
 import usePaginate from '../../../hooks/usePaginate';
-
-import { fetchCollection, fetchCollectionAssets } from '../../../redux/top-sales/topSalesSlice';
+import { fetchCollection, fetchCollectionAssets, fetchCollectionTraitTypes } from '../../../redux/top-sales/topSalesSlice';
 
 type CategoryFilter = {
   category: string;
@@ -48,6 +47,16 @@ const TopSalesDetail = () => {
     setCategoryFilter([]);
     setSearchvalue('');
   };
+
+  useEffect(() => {
+    if (slug) {
+      dispatch(
+        fetchCollectionTraitTypes({
+          slug: slug as string,
+        })
+      );
+    }
+  }, [slug]);
 
   useEffect(() => {
     if (slug) {
