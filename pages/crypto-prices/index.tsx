@@ -130,7 +130,6 @@ const CryptoPricePage = () => {
   }, [page, cryptoSymbol, isConnected]);
 
   useEffect(() => {
-    console.log(111);
     dispatch(fetchCryptoCurrencyMount({ start: 1, limit: 20, convert: cryptoSymbol.symbol || 'USD' }));
   }, [cryptoSymbol.symbol, isConnected]);
 
