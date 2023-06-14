@@ -48,6 +48,8 @@ const handler = NextAuth({
 
           return { ...user.data, expiration: decoded.exp, jwt };
         } catch (error) {
+          console.log({ error });
+
           throw new Error(error);
         }
       },

@@ -44,10 +44,14 @@ const metaData: MetadataProps = {
 
 const GeneralLayout = ({ children }: { children: React.ReactNode }) => {
   const { showAnimation } = useAppSelector((state) => state.isAuth);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { mode } = useTheme();
   const router = useRouter();
   const { isConnected } = useAccount();
+
+  if (status === 'loading') {
+    return <h3>Loading...</h3>;
+  }
 
   return (
     <div className={`${mode}`}>

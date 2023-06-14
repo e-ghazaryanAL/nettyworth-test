@@ -28,7 +28,6 @@ import { useTheme } from '../../../hooks/useTheme';
 import { setShowAnimation } from '../../../redux/auth/authSlice';
 import { searchHandler } from '../../../redux/auth/portfolioSlice';
 import { setUserImage } from '../../../redux/wallet/userSlice';
-
 // import { ReactComponent as AddressIcon } from '../../../assets/icons/icon-address.svg';
 // import  SunIcon } from '../../../assets/icons/icon-logged-sun.svg';
 // import { ReactComponent as HeartIcon } from '../../../assets/icons/icon-fave.svg';
@@ -160,13 +159,26 @@ const Navbar = () => {
       setSettings(false);
     }
   };
+  function deleteAllCookies() {
+    const cookies = document.cookie.split(';');
 
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf('=');
+      const name = eqPos > -1 ? cookie.slice(0, eqPos) : cookie;
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    }
+  }
   const handleLogout = async () => {
     try {
-      await logoutUser();
+      deleteAllCookies();
+      // await logoutUser();
       disconnect();
-      await signOut();
-      router.push('/');
+      // router.push('/');
+      await signOut({
+        callbackUrl: '/',
+        redirect: true,
+      });
       return true;
     } catch (e) {
       return (e as AxiosError).message;

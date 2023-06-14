@@ -18,18 +18,25 @@ const Login = () => {
   const handleAuth = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await signIn('login', {
+      const result = await signIn('login', {
         ...values,
         redirect: false,
         callbackUrl: '/portfolio',
       });
+      if (result?.error) {
+        setError('Incorrect username or password');
+        return;
+      }
+
+      console.log({ result });
+
       const session = await getSession();
 
       setCookie('jwt', session?.user?.jwt as string);
 
       router.push('/portfolio');
     } catch (e) {
-      setError('Incorrect username or password');
+      console.log(e);
     }
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
