@@ -56,6 +56,7 @@ const getRequest = async (url: string, config?: AxiosRequestConfig, isOpenseaUrl
     if (token?.user?.accessToken) {
       requestConfig.headers = {
         ...requestConfig?.headers,
+        'ngrok-skip-browser-warning': true,
         Authorization: `Bearer ${token?.user?.accessToken}`,
         // withCredentials: true
       };
@@ -89,6 +90,7 @@ export const postRequest = async (
   if (session?.user) {
     requestConfig.headers = {
       ...requestConfig?.headers,
+      'ngrok-skip-browser-warning': true,
       Authorization: `Bearer ${session?.user.accessToken}`,
     };
   }
