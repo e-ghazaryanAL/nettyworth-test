@@ -1,5 +1,6 @@
 import MainPage from '../components/dashboard/home/Home';
 import OrganizationSchema from '../components/Organization';
+import { PublicRoute } from '../utils/auth';
 
 const structuredData = {
   '@context': 'http://schema.org',
@@ -76,5 +77,7 @@ function App() {
     </div>
   );
 }
+
+export const getServerSideProps = PublicRoute;
 
 export default App;
