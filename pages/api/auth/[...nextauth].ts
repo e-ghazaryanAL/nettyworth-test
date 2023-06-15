@@ -85,7 +85,8 @@ const handler = NextAuth({
       }
 
       const newToken = await refreshAccessToken(token);
-
+      console.log(process.env.NEXTAUTH_SECRET);
+      
       return { ...newToken, ...user };
     },
   },
