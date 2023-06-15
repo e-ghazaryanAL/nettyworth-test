@@ -14,8 +14,8 @@ import { clearCookies, getCookie } from '../utils/cookies';
 import { buildParams } from '../utils/formatter';
 
 const BASE_URL = 'https://app-api-1.nettyart.io';
-const NETTY_URL = 'https://app-api.nettyworth.io/api';
-// const NETTY_URL = 'http://localhost:3001/api';
+// const NETTY_URL = 'https://app-api.nettyworth.io/api';
+const NETTY_URL = ' https://c6a0-37-252-93-127.ngrok-free.app/api';
 const OPENSEA_URL = 'https://api.opensea.io/api/v1';
 const HYGRAPH_URL = `https://api-us-east-1.hygraph.com/v2/${process.env.NEXT_PUBLIC_HYGRAPH_API_KEY}/master`;
 const UPSHOT_URL = 'https://api.upshot.xyz/v2';

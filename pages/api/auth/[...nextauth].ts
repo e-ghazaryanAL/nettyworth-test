@@ -6,8 +6,8 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 
 import { loginUser, registerUser } from '../../../api/api';
 
-// const NETTY_URL = 'http://localhost:3001/api';
-const NETTY_URL = 'https://app-api.nettyworth.io/api';
+const NETTY_URL = ' https://c6a0-37-252-93-127.ngrok-free.app/api';
+// const NETTY_URL = 'https://app-api.nettyworth.io/api';
 
 async function refreshAccessToken(tokenObject) {
   try {
@@ -85,8 +85,8 @@ const handler = NextAuth({
       }
 
       const newToken = await refreshAccessToken(token);
-      console.log(process.env.NEXTAUTH_SECRET);
-      
+      console.log('nextAuth', process.env.NEXTAUTH_SECRET);
+
       return { ...newToken, ...user };
     },
   },
