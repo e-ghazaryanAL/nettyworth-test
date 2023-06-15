@@ -10,6 +10,7 @@ import { AppProps } from 'next/app';
 import { Poppins } from 'next/font/google';
 import Head from 'next/head';
 import { SessionProvider } from 'next-auth/react';
+import NextNProgress from 'nextjs-progressbar';
 import '../index.css';
 import '../styles/globals.css';
 import '../styles/theme.scss';
@@ -64,19 +65,22 @@ function MyApp({ Component, ...rest }: AppPropsWithLayout) {
   const getLayout = Component.getLayout || ((page: ReactElement) => <GeneralLayout>{page}</GeneralLayout>);
 
   return (
-    <div>
-      <Head>
-        <meta name='viewport' content='width=device-width, initial-scale=1' />
-        <meta name='theme-color' content='#000000' />
-      </Head>
-      <SessionProvider session={session}>
-        <Provider store={store}>
-          <div className={poppins.className}>
-            <WagmiConfig config={client}>{getLayout(<Component {...pageProps} />)}</WagmiConfig>
-          </div>
-        </Provider>
-      </SessionProvider>
-    </div>
+    <>
+      <NextNProgress></NextNProgress>
+      <div>
+        <Head>
+          <meta name='viewport' content='width=device-width, initial-scale=1' />
+          <meta name='theme-color' content='#000000' />
+        </Head>
+        <SessionProvider session={session}>
+          <Provider store={store}>
+            <div className={poppins.className}>
+              <WagmiConfig config={client}>{getLayout(<Component {...pageProps} />)}</WagmiConfig>
+            </div>
+          </Provider>
+        </SessionProvider>
+      </div>
+    </>
   );
 }
 
