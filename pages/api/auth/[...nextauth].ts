@@ -15,6 +15,7 @@ async function refreshAccessToken(tokenObject) {
       headers: {
         Authorization: `Bearer ${tokenObject.accessToken}`,
         Cookie: `jwt=${tokenObject.jwt}`,
+        'ngrok-skip-browser-warning': true,
       },
       withCredentials: true,
     });
